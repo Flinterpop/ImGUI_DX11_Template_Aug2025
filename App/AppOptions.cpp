@@ -39,7 +39,7 @@ void TemplateApp::ShowAppOptions(bool *bOptionsWindow)
     ImGuiWindowFlags _flags = ImGuiWindowFlags_AlwaysAutoResize; //ImGuiWindowFlags_None;
     ImGui::Begin("Application Level Options ", bOptionsWindow,_flags);
     
-    static const char* label = ICON_FA_GLOBE_AMERICAS " RadarSites - " __DATE__;
+    static const char* label = ICON_FA_GLOBE_AMERICAS " AppName - " __DATE__;
     ImGui::Text(label);
     ImGui::Separator();
         
