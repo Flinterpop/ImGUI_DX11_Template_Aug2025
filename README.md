@@ -1,9 +1,9 @@
 # ImGUI_DX11_Template_Aug2025
 Medium level starter project
 
-clone the repo
-create a build folder
-from the build folder run `cmake ..`
+1.  clone the repo
+2.  create a build folder
+3.  from the build folder run `cmake ..`
 
 
 Template has some basic features
