@@ -15,4 +15,7 @@ Template has some basic features
 6. Uses the FMT library and some simple coloure printf type functions for logging.
 
 
+<img width="2016" height="871" alt="image" src="https://github.com/user-attachments/assets/f7d38ba4-c4fb-4273-abb9-e3308dfa6985" />
+
+
 <img width="2625" height="930" alt="image" src="https://github.com/user-attachments/assets/5eb81a98-9711-4ac1-8813-4f96e306bddf" />
