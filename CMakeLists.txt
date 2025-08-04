@@ -138,6 +138,18 @@ set(
 	SQLSupport/SQL_Common.cpp
 	SQLSupport/SQL_Common.h
 
+
+	App/ImGuiAPP.cpp
+	App/ImGuiAPP.h
+	App/TemplateApp.cpp
+	App/TemplateApp.h
+	App/About.cpp 
+	App/help.cpp 
+	App/help.h
+	App/ImBGUtil.cpp
+	App/ImBGUtil.h
+	App/AppOptions.cpp
+
 	#SQLSupport/SQL_RouteList.h
 	#SQLSupport/SQL_RouteList.cpp
     #SQLSupport/SQL_POIList.cpp
@@ -181,9 +193,12 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 #target_compile_definitions(${PROJECT_NAME} PRIVATE "UNICODE" "_UNICODE")
 # https://stackoverflow.com/questions/33137590/link-against-dx10-using-cmake
 
-target_include_directories(${PROJECT_NAME}  PUBLIC src)
+target_include_directories(${PROJECT_NAME}  PUBLIC App)
 target_include_directories(${PROJECT_NAME}  PUBLIC common)
+target_include_directories(${PROJECT_NAME}  PUBLIC hasMain)
+target_include_directories(${PROJECT_NAME}  PUBLIC src)
 target_include_directories(${PROJECT_NAME}  PUBLIC SQLSupport)
+
 
 target_link_libraries(${PROJECT_NAME}   ${DIRECTX_LIBS} )
 target_link_libraries(${PROJECT_NAME}   fmt)

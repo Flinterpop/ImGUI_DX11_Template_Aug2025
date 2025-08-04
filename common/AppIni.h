@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 
 void bg_SetIniDBFileName(char* name);
 bool bg_CreateAppIniIfDoesntExist();
@@ -20,3 +21,5 @@ bool UpdateIniReal(char* name, double val);
 
 std::string GetIniString(char* name, std::string _default);
 bool UpdateIniString(char* name, char* val);
+
+

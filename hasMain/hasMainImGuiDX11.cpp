@@ -34,6 +34,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #include "AppIni.h"
 #include "BGMainSupport.h"
 #include "resource.h"
+#include "TemplateApp.h"
 
 // Main code
 int main(int, char**)
@@ -71,7 +72,7 @@ int main(int, char**)
 
     ::RegisterClassExW(&wc);
 
-    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear ImGui DirectX11 Example", WS_OVERLAPPEDWINDOW, pos_x, pos_y, ws_x, ws_y, nullptr, nullptr, wc.hInstance, nullptr);
+    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"ImGui Direct X 11 Template", WS_OVERLAPPEDWINDOW, pos_x, pos_y, ws_x, ws_y, nullptr, nullptr, wc.hInstance, nullptr);
 
  
     // Initialize Direct3D
@@ -93,9 +94,18 @@ int main(int, char**)
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-    //Brad Mods
-    if (bg_EnableDocking) io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-    if (bg_EnableViewPorts) io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+
+     //Brad additions
+    if (bg_IsDockingEnabled())
+    {
+        putsBlue("Enabling Docking");
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+    }
+    if (bg_AreViewPortsEnabled())
+    {
+        putsBlue("Enabling Viewports");
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+    }
 
     //io.ConfigViewportsNoAutoMerge = true;
     //io.ConfigViewportsNoTaskBarIcon = true;
@@ -138,6 +148,8 @@ int main(int, char**)
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
 
+    TemplateApp MyApp; //m_map is an ImGuiApp
+    MyApp.InitializeApp();
 
 
     // Our state
@@ -188,7 +200,8 @@ int main(int, char**)
 
 
         //BRAD Add Application Update function here
-        if (show_demo_window)  ImGui::ShowDemoWindow(&show_demo_window);
+         MyApp.UpdateApp();
+        //if (show_demo_window)  ImGui::ShowDemoWindow(&show_demo_window);
        
 
         // Rendering
@@ -212,7 +225,7 @@ int main(int, char**)
     }
 
 
-
+    MyApp.ShutDownApp();
     
     bg_SaveWindowParamsToAppIni();
 

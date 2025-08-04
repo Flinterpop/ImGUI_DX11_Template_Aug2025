@@ -41,3 +41,4 @@ void putsYellow(const char* fmt, ...);
 void putsSilver(const char* fmt, ...);
 void putsBlue(const char* fmt, ...);
 
+void HexDump(int bufLen, unsigned char* buf);

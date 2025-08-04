@@ -395,3 +395,32 @@ void putsColor(fmt::color col, const char* fmt, ...)
     va_end(args);
 }
 
+
+
+
+
+void HexDump(int bufLen, unsigned char* buf)
+{
+
+    bool error = false;
+    printf("\r\nDumping %d bytes.\r\n", bufLen);
+    char textLine[100] = "";
+    for (int x = 0; x < bufLen; x++)
+    {
+        char c = (char)buf[x];
+        //if (isalnum(c))
+        //    textLine[(x % 16)] = c;
+        //else
+        textLine[(x % 16)] = '.';
+
+        if (!((x) % 16)) printf("%02X: ", x);
+        printf("%02X ", (unsigned short)buf[x]);
+
+        if (!((x + 1) % 16)) {
+            textLine[(x % 16) + 1] = 0;
+            printf("   %s", textLine);
+            printf("\r\n");
+        }
+    }
+    printf("\r\n");
+}

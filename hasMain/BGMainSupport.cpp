@@ -1,7 +1,4 @@
 
-#pragma region BradMain
-//Custom Brad Section
-
 #include "BGMainSupport.h"
 
 #include <map>
@@ -16,33 +13,39 @@
 
 
 
-std::map<std::string, ImFont*> Fonts;  // font map
+static std::map<std::string, ImFont*> Fonts;  // font map
 static float fontScale = 13.0;
 
 
-int horizontalRes = 0;
-int verticalRes = 0;
+static int horizontalRes = 0;
+static int verticalRes = 0;
 
 static bool b_useViewPorts = false;
 static bool b_enableDocking = false;
 
-bool bg_EnableDocking()
+bool bg_IsDockingEnabled()
 {
     return b_enableDocking;
 }
 
-bool bg_EnableViewPorts()
+void bg_SetDocking(bool val)
+{
+    b_enableDocking = val;
+}
+
+
+bool bg_AreViewPortsEnabled()
 {
     return b_useViewPorts;
 }
 
 
-/*
-extern     float pos_x;
-extern     float pos_y;
-extern     float ws_x;
-extern     float ws_y;
-*/
+void bg_EnableViewPorts(bool val)
+{
+    b_useViewPorts = val;
+}
+
+
 
 static float pos_x;
 static float pos_y;
@@ -102,12 +105,21 @@ void bg_LoadWindowParamsFromAppIni(float &pos_x, float & pos_y, float &ws_x, flo
 
     b_useViewPorts = GetIniBool("useViewPorts", false);
     b_enableDocking = GetIniBool("enableDocking", false);
+    //putsRed("b_useViewPorts is %c b_enableDocking is %c", b_useViewPorts ? 'T' : 'F', b_enableDocking?'T':'F');
 
 
     pos_x = GetIniReal("WinPos_X", 100);
     pos_y = GetIniReal("WinPos_Y", 100);
-    if (pos_x > horizontalRes) pos_x = 100.0;
-    if (pos_y > verticalRes) pos_y = 100.0;
+    if (pos_x > horizontalRes)
+    {
+        putsRed("Window X position off screen - setting to 100");
+        pos_x = 100.0;
+    }
+    if (pos_y > verticalRes)
+    {
+        putsRed("Window Y position off screen - setting to 100");
+        pos_y = 100.0;
+    }
 
     ws_x = GetIniReal("WinSize_X", 1280);
     ws_y = GetIniReal("WinSize_Y", 800);
@@ -151,12 +163,10 @@ void bg_ShowDesktopResolution()
 
 
 
-#pragma endregion BradMain
 
 
 
-
-
+// - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
 bool bg_LoadFonts()
 {
     ImGuiStyle& style = ImGui::GetStyle();
@@ -180,14 +190,16 @@ bool bg_LoadFonts()
 
     static const ImWchar fa_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
 
+    
     ImStrncpy(font_cfg.Name, "Roboto Regular", 40);
     Fonts[font_cfg.Name] = io.Fonts->AddFontFromMemoryTTF(Roboto_Regular_ttf, Roboto_Regular_ttf_len, 15.0f, &font_cfg);
-
+    
     ImFontConfig config;
     config.MergeMode = true;
     config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
     config.FontDataOwnedByAtlas = false; //added to stop crashing when shutting down
     io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &config, fa_ranges);
+    
 
 #ifndef RELEASE_VERSION
     if (std::filesystem::exists("fonts//roboto-medium.ttf"))

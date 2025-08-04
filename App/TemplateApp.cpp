@@ -1,0 +1,183 @@
+
+#include "ImGui.h"
+
+#include "Fonts/font_awesome_5.h"
+
+#include <fmt/base.h>
+#include <fmt/format.h>
+#include <fmt/color.h>
+
+#include "AppIni.h"
+#include "BGUtil.h"
+
+//#include "AppLogger.h"
+//#include "ImBGUtil.h"
+
+#include "TemplateApp.h"
+#include "help.h"
+
+void ShowAbout(bool* bAboutWindow);  //protoype from About.cpp
+
+
+void TemplateApp::InitializeApp()
+{
+    LoadMainAppStateFromApp_Ini();
+};
+
+void TemplateApp::ShutDownApp()
+{
+    SaveMainAppStateFromApp_Ini();
+}
+
+
+
+
+
+void TemplateApp::LoadMainAppStateFromApp_Ini()
+{
+    putsBlue("Loading App State");
+    
+    mb_map_debug = GetIniBool("map_debug", false);
+    mb_showAbout = GetIniBool("showAbout", false);
+    mb_showHelp = GetIniBool("showHelp", false);
+    mb_showLog = GetIniBool("showLog", false);
+    mb_showDemoWindow = GetIniBool("showDemoWindow", false);
+
+    mb_showOptions = GetIniBool("mb_showOptions", false);
+
+    char ff[40];
+    std::string s = GetIniString("font", "");
+    strcpy(ff, s.c_str());
+
+    ImGuiIO& io = ImGui::GetIO();
+    int _index = 0;
+    for (ImFont* font : io.Fonts->Fonts)
+    {
+        if (!strcmp(font->GetDebugName(), ff))
+        {
+            io.FontDefault = font;
+            //smallFontIndex = _index - 1;
+        }
+        _index++;
+    }
+    //if (smallFontIndex < 0) smallFontIndex = 0;
+
+    putsBlue("\tCompleted Loading App State");
+}
+
+
+void TemplateApp::SaveMainAppStateFromApp_Ini()
+{
+    putsBlue("Saving App State");
+
+    UpdateIniBool("map_debug", mb_map_debug);
+    UpdateIniBool("showAbout", mb_showAbout);
+    UpdateIniBool("showHelp", mb_showHelp);
+    UpdateIniBool("showLog", mb_showLog);
+    UpdateIniBool("showDemoWindow", mb_showDemoWindow);
+    UpdateIniBool("mb_showOptions", mb_showOptions);
+
+    ImFont* font_current = ImGui::GetFont();
+    UpdateIniString("font", (char*)font_current->GetDebugName());
+
+    putsBlue("\tCompleted Saving App State");
+}
+
+
+
+
+void TemplateApp::UpdateApp()
+{
+	CheckKeysPressed();
+
+    //these 4 lines force the next ImGui::Begin to use the main viewport. 
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize(viewport->WorkSize);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    std::string _MainWindowsTitle = "ImGuiDX11 Template"; //fmt::format("Map: {0} at Zm {1}  declutter: {2}###MainWindow", mngr.GetCurMapName().c_str(), m_Zoom, g_acmPtr->getDeclutter());
+
+    ImGui::Begin(_MainWindowsTitle.c_str(), 0, mainWinFlags);
+
+    ShowAllMenuBars();
+
+    //MainDraw();
+
+#pragma region DrawOverlays
+    //DrawToolBar();
+    //DrawToast();
+#pragma endregion DrawOverlays
+
+
+    ImGui::End();
+
+#pragma region ShowOtherWindows
+    //if (mb_showLog)         MyLog.Draw("App Log", &mb_showLog);
+    if (mb_showOptions)     ShowAppOptions(&mb_showOptions);
+    if (mb_showAbout)       ShowAbout(&mb_showAbout);
+    if (mb_showHelp)        ShowHelpWindow(&mb_showHelp);
+    
+    if (mb_showDemoWindow)  ImGui::ShowDemoWindow(&mb_showDemoWindow);
+#pragma endregion OtherWindows
+
+
+
+}
+
+
+
+void TemplateApp::ShowAllMenuBars()
+{
+    if (ImGui::BeginMenuBar())
+    {
+        if (ImGui::BeginMenu("File"))
+        {
+            if (ImGui::MenuItem("Re-Load App State"))
+            {
+                LoadMainAppStateFromApp_Ini();
+                //DoLoadAllModulesStateFromApp_Ini();
+            }
+            ImGui::SetItemTooltip("Loads app.ini file.");
+
+            if (ImGui::MenuItem("Save App State"))
+            {
+                SaveMainAppStateFromApp_Ini();
+                //DoSaveAllModuleStateToApp_Ini();
+            }
+            ImGui::SetItemTooltip("Saves App (not scenario) state.  Creates new app.ini file if one does not exist.");
+
+
+            ImGui::Separator();
+            if (ImGui::MenuItem("App Options", NULL, mb_showOptions)) { mb_showOptions = !mb_showOptions; }
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Exit")) ::PostQuitMessage(0);
+
+            ImGui::EndMenu();
+        }
+
+
+        if (ImGui::BeginMenu("Help"))
+        {
+            if (ImGui::MenuItem("Show Demo Window", NULL, mb_showDemoWindow)) { mb_showDemoWindow = !mb_showDemoWindow; }
+
+            if (ImGui::MenuItem("Log", NULL, mb_showLog)) { mb_showLog = !mb_showLog; }
+            if (ImGui::MenuItem("Debug", NULL, mb_map_debug)) { mb_map_debug = !mb_map_debug; }
+            if (ImGui::MenuItem("Help", NULL, mb_showHelp)) { mb_showHelp = !mb_showHelp; }
+            if (ImGui::MenuItem("About", NULL, mb_showAbout)) { mb_showAbout = !mb_showAbout; }
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMenuBar();
+    }
+
+}
+
+
+void TemplateApp::CheckKeysPressed()
+{
+
+}
+

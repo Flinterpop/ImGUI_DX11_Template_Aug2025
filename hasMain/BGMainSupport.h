@@ -2,8 +2,11 @@
 
 #include "Windows.h"
 
-bool bg_EnableDocking();
-bool bg_EnableViewPorts();
+bool bg_IsDockingEnabled();
+bool bg_AreViewPortsEnabled();
+void bg_SetDocking(bool val);
+void bg_EnableViewPorts(bool val);
+
 
 void BG_GetWinInfo(HWND hwnd);
 
