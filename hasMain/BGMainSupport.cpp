@@ -169,6 +169,8 @@ void bg_ShowDesktopResolution()
 // - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
 bool bg_LoadFonts()
 {
+    
+   
     ImGuiStyle& style = ImGui::GetStyle();
     style.FontSizeBase = fontScale; // 15.0f;  //startpoint
     style._NextFrameFontSizeBase = style.FontSizeBase; // FIXME: Temporary hack until we finish remaining work.
@@ -188,55 +190,71 @@ bool bg_LoadFonts()
     icons_config.OversampleV = 1;
     icons_config.FontDataOwnedByAtlas = false;
 
-    static const ImWchar fa_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
 
-    
+    // Load a first font
+    //ImFont* font = io.Fonts->AddFontDefault();
+
     ImStrncpy(font_cfg.Name, "Roboto Regular", 40);
-    Fonts[font_cfg.Name] = io.Fonts->AddFontFromMemoryTTF(Roboto_Regular_ttf, Roboto_Regular_ttf_len, 15.0f, &font_cfg);
+    io.Fonts->AddFontFromMemoryTTF(Roboto_Regular_ttf, Roboto_Regular_ttf_len, 15.0f, &font_cfg);
     
-    ImFontConfig config;
-    config.MergeMode = true;
-    config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
-    config.FontDataOwnedByAtlas = false; //added to stop crashing when shutting down
-    io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &config, fa_ranges);
-    
+    //io.Fonts->AddFontFromFileTTF("fonts//verdana.ttf" ,15.0f, &font_cfg);
+
+
+    icons_config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
+    io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &icons_config);
+    //io.Fonts->AddFontFromFileTTF("fonts/fontawesome-webfont.ttf", 13.0f, &font_cfg);
+
+    if (std::filesystem::exists("fonts//roboto-medium.ttf"))
+    {
+        ImStrncpy(font_cfg.Name, "Roboto Medium", 40);
+        io.Fonts->AddFontFromFileTTF("fonts//roboto-medium.ttf", 15.0, &font_cfg);
+        io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &icons_config);
+    }
+
+
 
 #ifndef RELEASE_VERSION
     if (std::filesystem::exists("fonts//roboto-medium.ttf"))
     {
-        Fonts[font_cfg.Name] = io.Fonts->AddFontFromFileTTF("fonts//roboto-medium.ttf");
-        io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &config, fa_ranges);
+        ImStrncpy(font_cfg.Name, "Roboto Medium", 40);
+        Fonts[font_cfg.Name] = io.Fonts->AddFontFromFileTTF("fonts//roboto-medium.ttf", 15.0, &font_cfg);
+        io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &icons_config);
     }
 
     if (std::filesystem::exists("fonts//verdana.ttf"))
     {
-        Fonts[font_cfg.Name] = io.Fonts->AddFontFromFileTTF("fonts//verdana.ttf");
-        io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &config, fa_ranges);
+        ImStrncpy(font_cfg.Name, "Verdana", 40);
+        Fonts[font_cfg.Name] = io.Fonts->AddFontFromFileTTF("fonts//verdana.ttf", 15.0, &font_cfg);
+        io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &icons_config);
     }
 
     if (std::filesystem::exists("fonts//16020_FUTURAM.ttf"))
     {
-        Fonts[font_cfg.Name] = io.Fonts->AddFontFromFileTTF("fonts//16020_FUTURAM.ttf");//, 15.0f);
-        io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &config);
+        ImStrncpy(font_cfg.Name, "16020_FUTURAM", 40);
+        Fonts[font_cfg.Name] = io.Fonts->AddFontFromFileTTF("fonts//16020_FUTURAM.ttf", 15.0, &font_cfg);
+        io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &icons_config);
     }
 
 
     if (std::filesystem::exists("fonts//DroidSansMono.ttf"))
     {
-        Fonts[font_cfg.Name] = io.Fonts->AddFontFromFileTTF("fonts//DroidSansMono.ttf");
-        io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &config);
+        ImStrncpy(font_cfg.Name, "DroidSansMono", 40);
+        Fonts[font_cfg.Name] = io.Fonts->AddFontFromFileTTF("fonts//DroidSansMono.ttf", 15.0, &font_cfg);
+        io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &icons_config);
     }
 
     if (std::filesystem::exists("fonts//Cousine-Regular.ttf"))
     {
-        Fonts[font_cfg.Name] = io.Fonts->AddFontFromFileTTF("fonts//Cousine-Regular.ttf");
-        io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &config);
+        ImStrncpy(font_cfg.Name, "Cousine-Regular", 40);
+        Fonts[font_cfg.Name] = io.Fonts->AddFontFromFileTTF("fonts//Cousine-Regular.ttf", 15.0, &font_cfg);
+        io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &icons_config);
     }
 
     if (std::filesystem::exists("fonts//Anonymous.ttf"))
     {
-        Fonts[font_cfg.Name] = io.Fonts->AddFontFromFileTTF("fonts//Anonymous.ttf");
-        io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &config);
+        ImStrncpy(font_cfg.Name, "Anonymous", 40);
+        Fonts[font_cfg.Name] = io.Fonts->AddFontFromFileTTF("fonts//Anonymous.ttf", 15.0, &font_cfg);
+        io.Fonts->AddFontFromMemoryTTF(fa_solid_900_ttf, fa_solid_900_ttf_len, 15.0f, &icons_config);
     }
 #endif
 
