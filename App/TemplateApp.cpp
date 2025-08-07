@@ -216,11 +216,227 @@ void TemplateApp::DrawImPlotExample()
     }
 }
 
+
+int Grid[16][32]{};
+
+ImVec2 canvas_pTL{};
+float cellWidth = 50.0f;
+
+void drawCell(int r, int c)
+{
+    ImVec2 p1 = ImVec2(canvas_pTL.x + (float)(c * cellWidth), canvas_pTL.y + (r * cellWidth));
+    ImVec2 p2 = ImVec2(p1.x + cellWidth, p1.y + cellWidth);
+    if (1 == Grid[r][c]) ImGui::GetWindowDrawList()->AddRectFilled(p1, p2, IM_COL32(0, 0, 255, 255));
+    ImGui::GetWindowDrawList()->AddRect(p1, p2, IM_COL32(0, 0, 0, 255));
+}
+
+
+#include <fstream> // Required for file stream operations
+#include <iostream> // Required for console output
+
+void readGrid()
+{
+    putsRed("Reading grid");
+    std::ifstream is("output_text.txt");
+    int cnt = 0, x;
+
+    // Check if the file opening is successful
+    if (!is) {
+        putsRed("Failed to open the file");
+        return;
+    }
+
+    for (int r = 0;r < 16;r++)
+    {
+        for (int c = 0;c < 32;c++)
+        {
+            int x; 
+            is >> x;
+            Grid[r][c] = x;
+        }
+    }
+
+    // Close the file
+    is.close();
+}
+
+void writeGrid()
+{
+    putsRed("Saving grid");
+    std::ofstream outputFile("output_text.txt"); // Create or overwrite output_text.txt
+
+    if (outputFile.is_open()) { // Check if the file was opened successfully
+       
+        for (int r = 0;r < 16;r++)
+        {
+            for (int c = 0;c < 32;c++)
+            {
+                outputFile << Grid[r][c] << std::endl;// << std::endl; // Write num1 and a newline
+            }
+        }
+
+        outputFile.close(); // Close the file
+        putsRed("Integers written to output_text.txt successfully");
+    }
+    else {
+        putsRed("Error opening file for writing.");
+    }
+}
+
+
+
+
+
+void PrintMaze()
+{
+    printf("Start here\r\n");
+
+    std::ofstream outputFile("maze.cpp"); // Create or overwrite output_text.txt
+    if (outputFile.is_open())
+    { // Check if the file was opened successfully
+
+        outputFile << "#include \"RayAppBG.h\"\r\n";
+
+        outputFile << "void RayAppBG::SetGrid() { ";
+        
+
+        for (int r = 0;r < 16;r++)
+        {
+            for (int c = 0;c < 32;c++)
+            {
+                char buf[200];
+                sprintf(buf, "Grid[%d][%d][0] = %d;\r\n", r, c, Grid[r][c]);
+                outputFile << buf << std::endl;
+            }
+        }
+
+        outputFile << "} ";
+
+        outputFile.close(); // Close the file
+    }
+}
+
+
+void clearGrid()
+{
+    printf("Start here\r\n");
+    for (int r = 0;r < 16;r++)
+    {
+        for (int c = 0;c < 32;c++)
+        {
+            Grid[r][c] = 0;
+        }
+    }
+}
+
+
+void fillGrid()
+{
+    printf("Start here\r\n");
+    for (int r = 0;r < 16;r++)
+    {
+        for (int c = 0;c < 32;c++)
+        {
+            Grid[r][c] = 1;
+        }
+    }
+
+
+}
+
 void TemplateApp::MainDraw()
 {
-    DrawImPlotExample();
+    Grid[5][5] = 1;
+    //DrawImPlotExample();
 
-    ImGui::GetWindowDrawList()->AddImage((ImTextureID)(intptr_t)SymbolImage.my_texture, ImVec2(100,300), ImVec2(500,700), { 0,0 }, { 1,1 }, ImColor(255, 255, 255, 255));
+    //ImGui::GetWindowDrawList()->AddImage((ImTextureID)(intptr_t)SymbolImage.my_texture, ImVec2(100,300), ImVec2(500,700), { 0,0 }, { 1,1 }, ImColor(255, 255, 255, 255));
+
+
+
+    canvas_pTL = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
+    ImVec2 m_canvas_sz = ImGui::GetContentRegionAvail();   // Resize canvas to what's available
+
+    if (m_canvas_sz.x < 50.0f) m_canvas_sz.x = 50.0f;
+    if (m_canvas_sz.y < 50.0f) m_canvas_sz.y = 50.0f;
+    ImVec2 canvas_pBR = ImVec2(canvas_pTL.x + m_canvas_sz.x, canvas_pTL.y + m_canvas_sz.y);
+    ImVec2 m_canvas_Centre = ImVec2((canvas_pBR.x - canvas_pTL.x) / 2 + canvas_pTL.x, (canvas_pBR.y - canvas_pTL.y) / 2 + canvas_pTL.y);
+
+    // This will catch our mouse interactions
+    ImGui::InvisibleButton("canvas", m_canvas_sz, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+    bool mb_isMouseOverMap = ImGui::IsItemHovered(); // Hovered
+    const bool is_active = ImGui::IsItemActive();   // Held
+
+    ImGuiIO& io = ImGui::GetIO();
+    ImVec2 g_displaySize = io.DisplaySize;
+
+    static int m_Zoom = 3;
+
+
+    float mx = io.MousePos.x - canvas_pTL.x;
+    float my = io.MousePos.y - canvas_pTL.y;
+    int mCol = (int)(mx / cellWidth);
+    int mRow = (int)(my / cellWidth);
+
+    //if (mb_isMouseOverMap) //if mouse is over this window then check for Zoom
+    if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+    {
+        if (ImGui::IsKeyPressed(ImGuiKey_A)) 
+        {
+            Grid[mRow][mCol] = 1;
+
+            //if (0 == Grid[mRow][mCol]) Grid[mRow][mCol] = 1;
+            //else Grid[mRow][mCol] = 0;
+            //Sleep(10);
+        }
+        if (ImGui::IsKeyPressed(ImGuiKey_S))
+        {
+            Grid[mRow][mCol] = 0;
+        }
+   }
+
+    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+    {
+        if (0 == Grid[mRow][mCol]) Grid[mRow][mCol] = 1;
+        else Grid[mRow][mCol] = 0;
+    }
+
+
+
+    //mouse position calculations
+    double MouseDeltaXFromCentre = io.MousePos.x - m_canvas_Centre.x;
+    double MouseDeltaYFromCentre = io.MousePos.y - m_canvas_Centre.y;
+
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+    draw_list->AddRect(canvas_pTL, canvas_pBR, IM_COL32(0, 0, 0, 255));
+
+
+    for (int r = 0;r < 16;r++)
+        for (int c = 0;c < 32;c++)
+        {
+            drawCell(r, c);
+        }
+
+
+
+    
+    char buf[200];
+    sprintf(buf,"TL: %d %d", (int)canvas_pTL.x, (int)canvas_pTL.y);
+    draw_list->AddText(canvas_pTL, ImColor(0, 0, 0, 255), buf);
+    
+    sprintf(buf, "BR: %d %d", (int)canvas_pBR.x, (int)canvas_pBR.y);
+    draw_list->AddText(ImVec2(canvas_pTL.x, canvas_pTL.y+30), ImColor(0, 0, 0, 255), buf);
+
+    sprintf(buf, "Mouse Pos: %d %d", (int)mx, (int)my);
+    draw_list->AddText(ImVec2(canvas_pTL.x, canvas_pTL.y + 60), ImColor(0, 0, 0, 255), buf);
+
+    sprintf(buf, "Mouse Cell: %d %d", (int)mCol, (int)mRow);
+    draw_list->AddText(ImVec2(canvas_pTL.x, canvas_pTL.y + 90), ImColor(0, 0, 0, 255), buf);
+
+
+
+
+
 
 }
 
@@ -303,6 +519,17 @@ void TemplateApp::ShowAllMenuBars()
             ImGui::EndMenu();
         }
 
+        if (ImGui::BeginMenu("Maze"))
+        {
+            if (ImGui::MenuItem("Load Maze")) { readGrid(); }
+            if (ImGui::MenuItem("Write Maze cpp file")) { PrintMaze(); }
+            if (ImGui::MenuItem("Save Maze")) { writeGrid(); }
+            if (ImGui::MenuItem("Clear Maze")) { clearGrid(); }
+            if (ImGui::MenuItem("Fill Maze")) { fillGrid(); }
+
+            ImGui::EndMenu();
+
+        }
 
         if (ImGui::BeginMenu("Help"))
         {

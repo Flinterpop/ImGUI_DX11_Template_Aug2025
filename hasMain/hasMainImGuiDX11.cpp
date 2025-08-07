@@ -55,8 +55,8 @@ int main(int, char**)
 
     float pos_x = 100;
     float pos_y = 100;
-    float ws_x = 1280;
-    float ws_y = 800;
+    float ws_x = 140;
+    float ws_y = 1000;
     bg_LoadWindowParamsFromAppIni(pos_x, pos_y, ws_x, ws_y);
 
       // Create application window
