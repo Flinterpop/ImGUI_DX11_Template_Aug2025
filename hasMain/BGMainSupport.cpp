@@ -169,8 +169,6 @@ void bg_ShowDesktopResolution()
 // - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
 bool bg_LoadFonts()
 {
-    
-   
     ImGuiStyle& style = ImGui::GetStyle();
     style.FontSizeBase = fontScale; // 15.0f;  //startpoint
     style._NextFrameFontSizeBase = style.FontSizeBase; // FIXME: Temporary hack until we finish remaining work.

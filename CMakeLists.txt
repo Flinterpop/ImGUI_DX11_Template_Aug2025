@@ -119,6 +119,8 @@ set(
     common/BGUtil.h
     common/AppIni.h
 	common/AppIni.cpp
+	common/ImBGUtil.cpp
+	common/ImBGUtil.h
 	
     common/Fonts/font_awesome_5.h
 	common/Fonts/FontAwesome5.cpp
@@ -146,8 +148,6 @@ set(
 	App/About.cpp 
 	App/help.cpp 
 	App/help.h
-	App/ImBGUtil.cpp
-	App/ImBGUtil.h
 	App/AppOptions.cpp
 
 	#SQLSupport/SQL_RouteList.h
@@ -155,10 +155,16 @@ set(
     #SQLSupport/SQL_POIList.cpp
 	#SQLSupport/SQL_ACList.cpp
 
+	imPlot/implot.cpp
+	imPlot/implot.h
+	imPlot/implot_internal.h
+	imPlot/implot_items.cpp
+	#imPlot/implot_demo.cpp
 
-
-
-
+	image/ImageDX.cpp
+	image/ImageDX.h
+	image/stb_image.h
+	image/stb_image_write.h
 
 )
 
@@ -198,7 +204,8 @@ target_include_directories(${PROJECT_NAME}  PUBLIC common)
 target_include_directories(${PROJECT_NAME}  PUBLIC hasMain)
 target_include_directories(${PROJECT_NAME}  PUBLIC src)
 target_include_directories(${PROJECT_NAME}  PUBLIC SQLSupport)
-
+target_include_directories(${PROJECT_NAME}  PUBLIC imPlot)
+target_include_directories(${PROJECT_NAME}  PUBLIC image)
 
 target_link_libraries(${PROJECT_NAME}   ${DIRECTX_LIBS} )
 target_link_libraries(${PROJECT_NAME}   fmt)

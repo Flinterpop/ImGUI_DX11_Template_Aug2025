@@ -3,6 +3,7 @@
 
 #include <ImGuiAPP.h>
 
+#include <ImageDX.h>
 
 
 class TemplateApp : public ImGuiApp
@@ -38,6 +39,18 @@ private:
 		void LoadMainAppStateFromApp_Ini();
 		void SaveMainAppStateFromApp_Ini();
 		void ShowAppOptions(bool* bOptionsWindow);
+		void MainDraw();
+
+		void DrawImPlotExample();
+		
+
+
+		Image SymbolImage{};
+		void writeImage();
+
+
+		int width, height, channels;
+		unsigned char* img;
 
 };
 

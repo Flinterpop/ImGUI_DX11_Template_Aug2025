@@ -13,8 +13,8 @@
 #include <tchar.h>
 
 // Data
-static ID3D11Device*            g_pd3dDevice = nullptr;
-static ID3D11DeviceContext*     g_pd3dDeviceContext = nullptr;
+ID3D11Device*            g_pd3dDevice = nullptr;  //this is used by ImageCDX.cpp
+ID3D11DeviceContext*     g_pd3dDeviceContext = nullptr;
 static IDXGISwapChain*          g_pSwapChain = nullptr;
 static bool                     g_SwapChainOccluded = false;
 static UINT                     g_ResizeWidth = 0, g_ResizeHeight = 0;
@@ -35,6 +35,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #include "BGMainSupport.h"
 #include "resource.h"
 #include "TemplateApp.h"
+
+#include "ImPlot.h"
 
 // Main code
 int main(int, char**)
@@ -90,6 +92,8 @@ int main(int, char**)
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImPlot::CreateContext();
+
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -156,7 +160,7 @@ int main(int, char**)
     bool show_demo_window = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-
+    putsBlue("Starting main application Loop...");
     // Main loop
     bool done = false;
     while (!done)
@@ -224,14 +228,18 @@ int main(int, char**)
         g_SwapChainOccluded = (hr == DXGI_STATUS_OCCLUDED);
     }
 
-
-    MyApp.ShutDownApp();
-    
+    //BRAD////////////////////////////////////
+    BG_GetWinInfo(hwnd);  //BRAD
     bg_SaveWindowParamsToAppIni();
-
+    MyApp.ShutDownApp();
+    //BRAD////////////////////////////////////
+     
+    
     // Cleanup
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
+    
+    ImPlot::DestroyContext();
     ImGui::DestroyContext();
 
     CleanupDeviceD3D();
@@ -322,8 +330,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return 0;
         break;
     case WM_DESTROY:
-        BG_GetWinInfo(hWnd);  //BRAD
-        ::PostQuitMessage(0);
+          ::PostQuitMessage(0);
         return 0;
     }
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);

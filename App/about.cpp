@@ -114,7 +114,7 @@ void ShowAbout(bool *bAboutWindow)
         ImGui::Text("TBD");
 
         ImGui::SeparatorText("Smaller Features");
-        ImGui::Text("Font Awesome only works with Font loaded from Memory");
+       
     }
 
     ImGui::End();
