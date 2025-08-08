@@ -66,9 +66,6 @@ int main(int, char**)
     float ws_x = 140;
     float ws_y = 1000;
     bg_LoadWindowParamsFromAppIni(pos_x, pos_y, ws_x, ws_y);
-    putsBlue("\tWindow Position: pos_x = %0.0f pos_y = %0.0f", pos_x, pos_y);
-    putsBlue("\tWindow size: ws_x = %0.0f ws_y = %0.0f", ws_x, ws_y);
-
 
     // Create application window
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
