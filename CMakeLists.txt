@@ -123,7 +123,6 @@ set(
     AppBase/BGUtil.h
     AppBase/ImBGUtil.cpp
 	AppBase/ImBGUtil.h
-	AppBase/ImGuiAPP.cpp
 	AppBase/ImGuiAPP.h
 
 
