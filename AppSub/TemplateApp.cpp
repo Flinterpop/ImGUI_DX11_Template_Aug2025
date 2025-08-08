@@ -10,7 +10,7 @@
 #include "AppIni.h"
 #include "BGUtil.h"
 
-//#include "AppLogger.h"
+#include "AppLogger.h"
 //#include "ImBGUtil.h"
 
 #include "TemplateApp.h"
@@ -154,7 +154,7 @@ void TemplateApp::UpdateApp()
 
 
 #pragma region ShowOtherWindows
-    //if (mb_showLog)         MyLog.Draw("App Log", &mb_showLog);
+    if (mb_showLog)         ShowLogWindow(&mb_showLog);
     if (mb_showOptions)     ShowAppOptions(&mb_showOptions);
     if (mb_showAbout)       ShowAbout(&mb_showAbout);
     if (mb_showHelp)        ShowHelpWindow(&mb_showHelp);

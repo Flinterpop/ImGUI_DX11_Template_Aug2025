@@ -124,6 +124,8 @@ set(
     AppBase/ImBGUtil.cpp
 	AppBase/ImBGUtil.h
 	AppBase/ImGuiAPP.h
+	AppBase/AppLogger.cpp
+	AppBase/AppLogger.h
 
 
 	AppSub/AboutSub.cpp 
