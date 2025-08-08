@@ -37,8 +37,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 ////////////////////Brad: Only changes required for this file: Provide App name , provide Appini filename, and enable IMPLOT or not
 const char* g_AppName{"Template App V1"};
 const char* g_AppIniFname{ "ImBG_APP_Ini.db" };
-
 #define USE_IMPLOT
+
+
 
 #ifdef USE_IMPLOT
 #include "ImPlot.h"
@@ -65,8 +66,11 @@ int main(int, char**)
     float ws_x = 140;
     float ws_y = 1000;
     bg_LoadWindowParamsFromAppIni(pos_x, pos_y, ws_x, ws_y);
+    putsBlue("\tWindow Position: pos_x = %0.0f pos_y = %0.0f", pos_x, pos_y);
+    putsBlue("\tWindow size: ws_x = %0.0f ws_y = %0.0f", ws_x, ws_y);
 
-      // Create application window
+
+    // Create application window
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
   
 
@@ -81,12 +85,8 @@ int main(int, char**)
 
     ::RegisterClassExW(&wc);
 
-    ////////////////////Brad Change 2 - Add Application name
-    //HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"ImGui Direct X 11 Template", WS_OVERLAPPEDWINDOW, pos_x, pos_y, ws_x, ws_y, nullptr, nullptr, wc.hInstance, nullptr);
-    
     auto t = convertUTF8ToWstring(g_AppName);
     HWND hwnd = ::CreateWindowW(wc.lpszClassName, t.c_str(), WS_OVERLAPPEDWINDOW, pos_x, pos_y, ws_x, ws_y, nullptr, nullptr, wc.hInstance, nullptr);
-
  
     // Initialize Direct3D
     if (!CreateDeviceD3D(hwnd))
@@ -115,14 +115,14 @@ int main(int, char**)
      //Brad additions
     if (bg_IsDockingEnabled())
     {
-        putsBlue("Enabling Docking");
+        putsBlue("\tEnabling Docking");
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-    }
+    } else putsBlue("\tDocking not enabled");
     if (bg_AreViewPortsEnabled())
     {
-        putsBlue("Enabling Viewports");
+        putsBlue("\tEnabling Viewports");
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-    }
+    } else putsBlue("\tViewports not enabled");
 
     //io.ConfigViewportsNoAutoMerge = true;
     //io.ConfigViewportsNoTaskBarIcon = true;
@@ -156,7 +156,7 @@ int main(int, char**)
     style.FrameRounding = 5.0f;
 
     bg_LoadFonts();
-    putsBlue("Fonts Loaded");
+    putsBlue("4. Fonts Loaded");
     //BRAD////////////////////////////////////
 
 
@@ -166,13 +166,14 @@ int main(int, char**)
 
 
     TemplateApp MyApp; //m_map is an ImGuiApp
+    putsBlue("5. Initializing App");
     MyApp.InitializeApp();
 
 
     // Our state
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    putsBlue("Starting main application Loop...");
+    putsBlue("6. Starting main application Loop...");
     // Main loop
     bool done = false;
     while (!done)
@@ -188,7 +189,6 @@ int main(int, char**)
             {
                 done = true;
             }
-                
         }
         if (done)  break;
             
@@ -241,6 +241,7 @@ int main(int, char**)
     }
 
     //BRAD////////////////////////////////////
+    putsBlue("7. Shutdown process: ");
     BG_GetWinInfo(hwnd);  //BRAD
     bg_SaveWindowParamsToAppIni();
     MyApp.ShutDownApp();
@@ -333,6 +334,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
     switch (msg)
     {
+    case WM_CLOSE:  //added by brad to change close behaviour and force shutdown
+        ::PostQuitMessage(0);  
+        return 0;
+        break; //can't break or get invalid handle when getting screen rectangle size
     case WM_SIZE:
         if (wParam == SIZE_MINIMIZED)
             return 0;

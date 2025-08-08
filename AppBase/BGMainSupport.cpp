@@ -64,14 +64,28 @@ void BG_GetWinInfo(HWND hwnd)
         ws_y = rect2.bottom - rect2.top;
         pos_x = rect2.left;
         pos_y = rect2.top;
-        //putsGreen("\Save Window Position: pos_x = %0.0f pos_y = %0.0f", pos_x, pos_y);
-        //putsGreen("\Save Window size: ws_x = %0.0f ws_y = %0.0f", ws_x, ws_y);
     }
     else
     {
-        DWORD retVal = GetLastError();
-        putsRed("GetWindowRect has failed");
-        //std::cout << retVal << std::endl;
+        DWORD dw = GetLastError();
+        putsRed("\tGetWindowRect has failed with Error %ld",dw);
+
+        LPVOID lpMsgBuf;
+
+        if (FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
+            FORMAT_MESSAGE_FROM_SYSTEM |
+            FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL,
+            dw,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPTSTR)&lpMsgBuf,
+            0, NULL) == 0) {
+            MessageBox(NULL, TEXT("FormatMessage failed"), TEXT("Error"), MB_OK);
+            ExitProcess(dw);
+        }
+
+        MessageBox(NULL, (LPCTSTR)lpMsgBuf, TEXT("Error"), MB_OK);
     }
 }
 
@@ -125,9 +139,6 @@ void bg_LoadWindowParamsFromAppIni(float &pos_x, float & pos_y, float &ws_x, flo
     ws_y = GetIniReal("WinSize_Y", 800);
     if (ws_x < 400) ws_x = 1280;
     if (ws_y < 400) ws_y = 800;
-
-    putsBlue("\tWindow Position: pos_x = %0.0f pos_y = %0.0f", pos_x, pos_y);
-    putsBlue("\tWindow size: ws_x = %0.0f ws_y = %0.0f", ws_x, ws_y);
 }
 
 
@@ -157,7 +168,7 @@ void bg_GetDesktopResolution(int& horizontal, int& vertical)
 void bg_ShowDesktopResolution()
 {
     bg_GetDesktopResolution(horizontalRes, verticalRes);
-    putsBlue("GetDesktopResolution\r\n\thorizontal: %d vertical: %d", horizontalRes, verticalRes);
+    putsBlue("2. GetDesktopResolution\r\n\thorizontal: %d vertical: %d", horizontalRes, verticalRes);
 }
 
 

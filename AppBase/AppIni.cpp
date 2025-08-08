@@ -48,15 +48,16 @@ static bool AppIni_file_exists(const fs::path& p, fs::file_status s = fs::file_s
 //Create and intialize Application Database with 3 tables
 bool bg_CreateAppIniIfDoesntExist()
 {
-    putsBlue("Creating new App Ini Data base %s", AppIni_dbName);
+    putsBlue("3. Looking for App Ini Data base %s", AppIni_dbName);
 
     const fs::path sandbox{ AppIni_dbName };
     if (AppIni_file_exists(sandbox))
     {
-        putsGreen("\tDatabase %s already exists", AppIni_dbName);
+        putsGreen("\tFound AppIni Database -> %s", AppIni_dbName);
         return false;
     }
 
+    putsGreen("Creating new App Ini Data base %s", AppIni_dbName);
     sqlite3* db;
     char* zErrMsg = 0;
     int rc = sqlite3_open(AppIni_dbName, &db);
@@ -590,7 +591,7 @@ double GetIniReal(char* name, double _default)
     sqlite3_finalize(stmt);
     sqlite3_close(db);
        
-    putsBlue("\tReturning %s: %f", name,val);
+    //putsBlue("\tReturning %s: %f", name,val);
     return val;
 }
 
