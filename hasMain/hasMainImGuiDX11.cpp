@@ -28,20 +28,27 @@ void CleanupRenderTarget();
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-
-
 #include "BGUtil.h"
 #include "AppIni.h"
 #include "BGMainSupport.h"
 #include "resource.h"
 #include "TemplateApp.h"
 
+////////////////////Brad: Only changes required for this file: Provide App name , provide Appini filename, and enable IMPLOT or not
+const char* g_AppName{"Template App V1"};
+const char* g_AppIniFname{ "ImBG_APP_Ini.db" };
+
+#define USE_IMPLOT
+
+#ifdef USE_IMPLOT
 #include "ImPlot.h"
+#endif
+
 
 // Main code
 int main(int, char**)
 {
-    putsBlue("1. BG ImguiDX11 Template App starting...");
+    putsBlue("1. BG ImguiDX11 App starting...");
     bg_ShowDesktopResolution();  //just for info
 
     putsBlue("\tEnabling DPI Awareness");
@@ -50,7 +57,7 @@ int main(int, char**)
     float main_scale = ImGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
     putsBlue("\tMain Display scale is %f", main_scale);
 
-    bg_SetIniDBFileName("ImBG_APP_Ini.db");
+    bg_SetIniDBFileName(g_AppIniFname);
     bg_CreateAppIniIfDoesntExist();
 
     float pos_x = 100;
@@ -74,7 +81,11 @@ int main(int, char**)
 
     ::RegisterClassExW(&wc);
 
-    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"ImGui Direct X 11 Template", WS_OVERLAPPEDWINDOW, pos_x, pos_y, ws_x, ws_y, nullptr, nullptr, wc.hInstance, nullptr);
+    ////////////////////Brad Change 2 - Add Application name
+    //HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"ImGui Direct X 11 Template", WS_OVERLAPPEDWINDOW, pos_x, pos_y, ws_x, ws_y, nullptr, nullptr, wc.hInstance, nullptr);
+    
+    auto t = convertUTF8ToWstring(g_AppName);
+    HWND hwnd = ::CreateWindowW(wc.lpszClassName, t.c_str(), WS_OVERLAPPEDWINDOW, pos_x, pos_y, ws_x, ws_y, nullptr, nullptr, wc.hInstance, nullptr);
 
  
     // Initialize Direct3D
@@ -92,8 +103,10 @@ int main(int, char**)
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImPlot::CreateContext();
 
+#ifdef USE_IMPLOT
+    ImPlot::CreateContext();
+#endif
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -157,7 +170,6 @@ int main(int, char**)
 
 
     // Our state
-    bool show_demo_window = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     putsBlue("Starting main application Loop...");
@@ -239,7 +251,9 @@ int main(int, char**)
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     
+#ifdef USE_IMPLOT
     ImPlot::DestroyContext();
+#endif
     ImGui::DestroyContext();
 
     CleanupDeviceD3D();

@@ -110,45 +110,51 @@ set(
     source_list
 
     hasMain/hasMainImGuiDX11.cpp
-	hasMain/BGMainSupport.cpp
-	hasMain/BGMainSupport.h
 	hasMain/resource.rc
 	hasMain/resource.h
 
-    common/BGUtil.cpp
-    common/BGUtil.h
-    common/AppIni.h
-	common/AppIni.cpp
-	common/ImBGUtil.cpp
-	common/ImBGUtil.h
+	AppBase/AboutBase.cpp 
+	AppBase/AppIni.h
+	AppBase/AppIni.cpp
+	AppBase/AppOptionsBase.cpp
+	AppBase/BGMainSupport.cpp
+	AppBase/BGMainSupport.h
+    AppBase/BGUtil.cpp
+    AppBase/BGUtil.h
+    AppBase/ImBGUtil.cpp
+	AppBase/ImBGUtil.h
+	AppBase/ImGuiAPP.cpp
+	AppBase/ImGuiAPP.h
+
+
+	AppSub/AboutSub.cpp 
+	AppSub/AppOptionsSub.cpp
+	AppSub/help.cpp 
+	AppSub/help.h
+	AppSub/TemplateApp.cpp
+	AppSub/TemplateApp.h
 	
-    common/Fonts/font_awesome_5.h
-	common/Fonts/FontAwesome5.cpp
-	common/Fonts/FontAwesome5Brands.cpp
-	common/Fonts/Fonts.h
-	common/Fonts/IconsFontAwesome5.h
-	common/Fonts/IconsFontAwesome5Brands.h
-	common/Fonts/RobotoBold.cpp
-	common/Fonts/RobotoItalic.cpp
-	common/Fonts/RobotoMonoBold.cpp
-	common/Fonts/RobotoMonoItalic.cpp
-	common/Fonts/RobotoMonoRegular.cpp
-	common/Fonts/RobotoRegular.cpp
 
-	SQLSupport/sqlite3.h
-	SQLSupport/sqlite3.c
-	SQLSupport/SQL_Common.cpp
-	SQLSupport/SQL_Common.h
+	AppBase/Fonts/font_awesome_5.h
+	AppBase/Fonts/FontAwesome5.cpp
+	AppBase/Fonts/FontAwesome5Brands.cpp
+	AppBase/Fonts/Fonts.h
+	AppBase/Fonts/IconsFontAwesome5.h
+	AppBase/Fonts/IconsFontAwesome5Brands.h
+	AppBase/Fonts/RobotoBold.cpp
+	AppBase/Fonts/RobotoItalic.cpp
+	AppBase/Fonts/RobotoMonoBold.cpp
+	AppBase/Fonts/RobotoMonoItalic.cpp
+	AppBase/Fonts/RobotoMonoRegular.cpp
+	AppBase/Fonts/RobotoRegular.cpp
+
+	SQLBase/sqlite3.h
+	SQLBase/sqlite3.c
+	SQLBase/SQL_Common.cpp
+	SQLBase/SQL_Common.h
 
 
-	App/ImGuiAPP.cpp
-	App/ImGuiAPP.h
-	App/TemplateApp.cpp
-	App/TemplateApp.h
-	App/About.cpp 
-	App/help.cpp 
-	App/help.h
-	App/AppOptions.cpp
+
 
 	#SQLSupport/SQL_RouteList.h
 	#SQLSupport/SQL_RouteList.cpp
@@ -199,11 +205,11 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 #target_compile_definitions(${PROJECT_NAME} PRIVATE "UNICODE" "_UNICODE")
 # https://stackoverflow.com/questions/33137590/link-against-dx10-using-cmake
 
-target_include_directories(${PROJECT_NAME}  PUBLIC App)
-target_include_directories(${PROJECT_NAME}  PUBLIC common)
+target_include_directories(${PROJECT_NAME}  PUBLIC AppBase)
+target_include_directories(${PROJECT_NAME}  PUBLIC AppSub)
 target_include_directories(${PROJECT_NAME}  PUBLIC hasMain)
 target_include_directories(${PROJECT_NAME}  PUBLIC src)
-target_include_directories(${PROJECT_NAME}  PUBLIC SQLSupport)
+target_include_directories(${PROJECT_NAME}  PUBLIC SQLBase)
 target_include_directories(${PROJECT_NAME}  PUBLIC imPlot)
 target_include_directories(${PROJECT_NAME}  PUBLIC image)
 
