@@ -2,7 +2,7 @@
 #include <chrono>
 
 #include "imgui.h"
-#include "fonts\IconsFontAwesome5.h"
+#include "fonts\font_awesome_5.h"
 
 #include <string>
 #include "stdio.h"

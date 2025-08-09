@@ -4,7 +4,7 @@
 
 #include "ImGui.h"
 
-#include "fonts\IconsFontAwesome5.h"
+#include "fonts\font_awesome_5.h"
 
 class ImGuiApp
 {
@@ -26,7 +26,7 @@ public:
 	virtual void ShutDownApp() {};
 	virtual void UpdateApp() {};
 
-	std::string AppName{ ICON_FA_GLOBE_AMERICAS " Default Name " __DATE__};
+	std::string AppName{ ICON_FA_GLOBE " Default Name " __DATE__};
 
 };
 

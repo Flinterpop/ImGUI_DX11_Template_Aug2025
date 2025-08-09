@@ -1,7 +1,7 @@
 #include "imgui.h"
 #include <imgui_internal.h>
 
-#include "fonts\IconsFontAwesome5.h"
+#include "fonts\font_awesome_5.h"
 
 #include "ImBGutil.h"
 #include "BGMainSupport.h"  //needed for viewport and docking options

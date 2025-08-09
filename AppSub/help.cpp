@@ -1,5 +1,7 @@
 #include "imgui.h"
-#include "fonts\IconsFontAwesome5.h"
+//#include "fonts\IconsFontAwesome5.h"
+#include "fonts\font_awesome_5.h"
+
 
 //#include "MapsToast.h"
 
@@ -552,7 +554,7 @@ void FontTest()
     ImGui::Button(ICON_FA_HAT_COWBOY "  ICON_FA_HAT_COWBOY");
     ImGui::Button(ICON_FA_HAT_COWBOY_SIDE "  ICON_FA_HAT_COWBOY_SIDE");
     ImGui::Button(ICON_FA_HAT_WIZARD "  ICON_FA_HAT_WIZARD");
-    ImGui::Button(ICON_FA_HAYKAL "  ICON_FA_HAYKAL");
+    //ImGui::Button(ICON_FA_HAYKAL "  ICON_FA_HAYKAL");
     ImGui::Button(ICON_FA_HDD "  ICON_FA_HDD");
     ImGui::Button(ICON_FA_HEADING "  ICON_FA_HEADING");
     ImGui::Button(ICON_FA_HEADPHONES "  ICON_FA_HEADPHONES");

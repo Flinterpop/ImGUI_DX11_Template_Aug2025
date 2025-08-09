@@ -22,7 +22,15 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
-#include "fonts/IconsFontAwesome6.h"
+//#include "fonts/IconsFontAwesome5.h"
+#include "fonts/font_awesome_5.h"
+
+
+
+
+
+
+
 
 
 /**
@@ -113,11 +121,6 @@ private:
 private:
     // Setters
 
-    inline void setTitle(const char* format, va_list args)
-    {
-        vsnprintf(this->title, sizeof(this->title), format, args);
-    }
-
     inline void setContent(const char* format, va_list args)
     {
         vsnprintf(this->content, sizeof(this->content), format, args);
@@ -129,6 +132,10 @@ private:
     }
 
 public:
+    inline void setTitle(const char* format, va_list args)
+    {
+        vsnprintf(this->title, sizeof(this->title), format, args);
+    }
 
     /**
      * @brief Set the title of the toast notification.
@@ -282,13 +289,13 @@ public:
         case ImGuiToastType::None:
             return nullptr;
         case ImGuiToastType::Success:
-            return ICON_FA_CIRCLE_CHECK; // Font Awesome 6
+            return ICON_FA_CHECK_CIRCLE; //ICON_FA_CIRCLE_CHECK; // Font Awesome 6
         case ImGuiToastType::Warning:
-            return ICON_FA_TRIANGLE_EXCLAMATION; // Font Awesome 6
+            return ICON_FA_EXCLAMATION_TRIANGLE; // Font Awesome 6
         case ImGuiToastType::Error:
-            return ICON_FA_CIRCLE_EXCLAMATION; // Font Awesome 6
+            return ICON_FA_EXCLAMATION_CIRCLE; //ICON_FA_CIRCLE_EXCLAMATION; // Font Awesome 6
         case ImGuiToastType::Info:
-            return ICON_FA_CIRCLE_INFO; // Font Awesome 6
+            return ICON_FA_INFO_CIRCLE; // Font Awesome 6
         default:
             return nullptr;
         }
@@ -467,7 +474,6 @@ namespace ImGui
     inline void InsertNotification(const ImGuiToast& toast)
     {
         notifications.push_back(toast);
-        printf("There are %d in queue\r\n", notifications.size());
     }
 
     /**
@@ -614,7 +620,7 @@ namespace ImGui
                     SetCursorPosX(GetCursorPosX() + (GetWindowSize().x - GetCursorPosX()) * scale);
 
                     // If the button is pressed, we want to remove the notification
-                    if (Button(ICON_FA_XMARK))
+                    if (Button(ICON_FA_WINDOW_CLOSE)) //ICON_FA_XMARK))
                     {
                         RemoveNotification(i);
                     }

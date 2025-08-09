@@ -126,10 +126,8 @@ set(
 	AppBase/ImGuiAPP.h
 	AppBase/AppLogger.cpp
 	AppBase/AppLogger.h
+
 	AppBase/ImGuiNotify.hpp
-
-
-
 
 	AppSub/AboutSub.cpp 
 	AppSub/AppOptionsSub.cpp
@@ -141,10 +139,9 @@ set(
 
 	AppBase/Fonts/font_awesome_5.h
 	AppBase/Fonts/FontAwesome5.cpp
-	AppBase/Fonts/FontAwesome5Brands.cpp
+	AppBase/Fonts/FontAwesome5.cpp
+	
 	AppBase/Fonts/Fonts.h
-	AppBase/Fonts/IconsFontAwesome5.h
-	AppBase/Fonts/IconsFontAwesome5Brands.h
 	AppBase/Fonts/RobotoBold.cpp
 	AppBase/Fonts/RobotoItalic.cpp
 	AppBase/Fonts/RobotoMonoBold.cpp

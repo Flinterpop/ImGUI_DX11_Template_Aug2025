@@ -223,8 +223,14 @@ void TemplateApp::CheckKeysPressed()
     if (ImGui::IsKeyPressed(ImGuiKey_W)) 
     { 
         ImGui::InsertNotification({ ImGuiToastType::Success, 3000, "That is a success! %s", "(Format here)" });
+        ImGui::InsertNotification({ ImGuiToastType::Warning, 3000, "Hello World! This is a warning! %d", 0x1337 });
+        ImGui::InsertNotification({ ImGuiToastType::Error, 3000, "Hello World! This is an error! 0x%X", 0xDEADBEEF });
+        //ImGui::InsertNotification({ ImGuiToastType::Info, 3000, "Hello World! This is an info!" });
+        ImGui::InsertNotification({ ImGuiToastType::Info, 3000, "Hi, I'm a long notification. I'm here to show you that you can write a lot of text in me. I'm also here to show you that I can wrap text, so you don't have to worry about that." });
 
-
+        ImGui::InsertNotification({ ImGuiToastType::Error, 5000, "Click me!", []() {ImGui::InsertNotification({ImGuiToastType::Success, 3000, "Thanks for clicking!"});}, "Notification content" });
+        
+        
     }
 }
 
