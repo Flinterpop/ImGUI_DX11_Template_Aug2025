@@ -7,11 +7,13 @@
 #include <fmt/format.h>
 #include <fmt/color.h>
 
+#include "BG_SocketBase.h"
 #include "AppIni.h"
 #include "BGUtil.h"
 
 #include "AppLogger.h"
 //#include "ImBGUtil.h"
+
 
 #include "TemplateApp.h"
 #include "help.h"
@@ -21,15 +23,23 @@
 #include "ImGuiNotify.hpp"
 
 
-
 void TemplateApp::InitializeApp()
 {
+    int retVal = initialise_winsock();
+    if (0 != retVal)
+    {
+        AddLog("Initialize Winsock Failed with code %d", retVal);
+        LogToFile("Initialize Winsock Failed with code TBD");
+    }
+
     LoadMainAppStateFromApp_Ini();
 };
 
 void TemplateApp::ShutDownApp()
 {
     SaveMainAppStateFromApp_Ini();
+
+    //closeandclean_winsock();
 }
 
 void TemplateApp::LoadMainAppStateFromApp_Ini()
@@ -230,8 +240,16 @@ void TemplateApp::ShowAllMenuBars()
             ImGui::EndMenu();
         }
 
+        if (ImGui::BeginMenu("Test Socket"))
+        {
+            if (ImGui::MenuItem("Open TCP", NULL))
+            {
+                SocketTest();
+            }
+            ImGui::EndMenu();
+         
 
-
+        }
 
         if (ImGui::BeginMenu("Help"))
         {
@@ -265,4 +283,12 @@ void TemplateApp::CheckKeysPressed()
         
     }
 }
+
+
+
+
+
+
+
+
 

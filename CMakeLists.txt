@@ -132,6 +132,7 @@ set(
 	AppSub/help.h
 	AppSub/TemplateApp.cpp
 	AppSub/TemplateApp.h
+	AppSub/TemplateBaseNetworking.cpp
 	
 
 	AppBase/Fonts/font_awesome_5.h
@@ -153,6 +154,12 @@ set(
 	SQLBase/SQL_Common.cpp
 	SQLBase/SQL_Common.h
 
+	socketStuff/BG_SocketBase.cpp
+	socketStuff/BG_SocketBase.h
+	socketStuff/bg_TCPSocket.h
+	socketStuff/bg_UDPSocket.h
+	socketStuff/bg_MulticastSocket.cpp
+	socketStuff/bg_MulticastSocket.h
 
 
 
@@ -212,6 +219,7 @@ target_include_directories(${PROJECT_NAME}  PUBLIC src)
 target_include_directories(${PROJECT_NAME}  PUBLIC SQLBase)
 target_include_directories(${PROJECT_NAME}  PUBLIC imPlot)
 target_include_directories(${PROJECT_NAME}  PUBLIC image)
+target_include_directories(${PROJECT_NAME}  PUBLIC SocketStuff)
 
 target_link_libraries(${PROJECT_NAME}   ${DIRECTX_LIBS} )
 target_link_libraries(${PROJECT_NAME}   fmt)
