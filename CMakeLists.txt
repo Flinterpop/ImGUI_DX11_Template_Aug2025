@@ -126,6 +126,9 @@ set(
 	AppBase/ImGuiAPP.h
 	AppBase/AppLogger.cpp
 	AppBase/AppLogger.h
+	AppBase/ImGuiNotify.hpp
+
+
 
 
 	AppSub/AboutSub.cpp 
@@ -148,6 +151,8 @@ set(
 	AppBase/Fonts/RobotoMonoItalic.cpp
 	AppBase/Fonts/RobotoMonoRegular.cpp
 	AppBase/Fonts/RobotoRegular.cpp
+
+
 
 	SQLBase/sqlite3.h
 	SQLBase/sqlite3.c

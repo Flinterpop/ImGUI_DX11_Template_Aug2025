@@ -33,6 +33,9 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #include "BGMainSupport.h"
 #include "resource.h"
 #include "TemplateApp.h"
+#include <ImGuiNotify.hpp>
+
+#include "imgui_internal.h" //for ImGuiContext
 
 ////////////////////Brad: Only changes required for this file: Provide App name , provide Appini filename, and enable IMPLOT or not
 const char* g_AppName{"Template App V1"};
@@ -216,6 +219,7 @@ int main(int, char**)
          MyApp.UpdateApp();
         //if (show_demo_window)  ImGui::ShowDemoWindow(&show_demo_window);
        
+         ImGui::RenderNotifications();
 
         // Rendering
         ImGui::Render();

@@ -18,6 +18,9 @@
 
 #include "implot.h"
 
+#include "ImGuiNotify.hpp"
+
+
 
 void TemplateApp::InitializeApp()
 {
@@ -217,6 +220,11 @@ void TemplateApp::ShowAllMenuBars()
 
 void TemplateApp::CheckKeysPressed()
 {
-    //if (ImGui::IsKeyPressed(ImGuiKey_W)) { writeImage();}
+    if (ImGui::IsKeyPressed(ImGuiKey_W)) 
+    { 
+        ImGui::InsertNotification({ ImGuiToastType::Success, 3000, "That is a success! %s", "(Format here)" });
+
+
+    }
 }
 

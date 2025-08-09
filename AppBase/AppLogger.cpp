@@ -33,6 +33,24 @@ void LogToFile(std::string logMsg)
     ofs.close();
 }
 
+
+void LogToFile(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    char buf[200];
+    vsprintf(buf, fmt, args);
+        std::string filePath = "logs//AppLog_" + getCurrentDateTime("date") + ".log";
+        std::string now = getCurrentDateTime("now");
+        std::ofstream ofs(filePath.c_str(), std::ios_base::out | std::ios_base::app);
+        ofs << now << '\t' << buf << '\n';
+        ofs.close();
+    va_end(args);
+
+
+}
+
+
 void AddLog(const char* fmt, ...)
 {
     if (lines.size() > 500) lines.clear();
@@ -43,6 +61,12 @@ void AddLog(const char* fmt, ...)
     vsprintf(buf, fmt, args);
     lines.emplace_back(std::string(buf));
     va_end(args);
+}
+
+void AddLog(std::string buf)
+{
+    if (lines.size() > 500) lines.clear();
+    lines.emplace_back(buf);
 }
 
 void ShowLogWindow(bool* p_open)

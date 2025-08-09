@@ -4,6 +4,10 @@
 
 
 void ShowLogWindow(bool* p_open);
+
+void LogToFile(const char* fmt, ...);
 void LogToFile(std::string logMsg);
+
 void AddLog(const char* fmt, ...);
+void AddLog(std::string buf);
 
