@@ -13,11 +13,16 @@
 
 namespace fs = std::filesystem;
 
+std::string GetExeDirectory();
+
 
 std::wstring convertUTF8ToWstring(const std::string& utf8_string);
 
-bool GetOpenFileNameWithUtf8Support(HWND hwnd, char* fpath, char* initialFolder = nullptr);
-bool GetSaveFileNameWithUtf8Support(HWND hwnd, char* fname, char* initialFolder = nullptr);
+
+bool g_OpenFile(HWND hwnd, char* fpath, char* filter=nullptr);
+bool g_SaveFile(HWND hwnd, char* fpath, char* filter = nullptr);
+
+
 
 std::string utf16_to_utf8_winapi(const std::wstring& utf16_string);
 int utf16_to_utf8(const std::wstring& utf16_string, char* dest);

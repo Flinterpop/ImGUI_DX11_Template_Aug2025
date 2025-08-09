@@ -9,14 +9,11 @@
 
 namespace fs = std::filesystem;
 
-#ifdef RELEASE_VERSION
+
 bool AppIni_Debug = false;
-#else
-bool AppIni_Debug = false;
-#endif
 
 
-char AppIni_dbName[120]; 
+char AppIni_dbName[MAX_PATH]; 
 
 void bg_SetIniDBFileName(const char* name)
 {
@@ -24,25 +21,22 @@ void bg_SetIniDBFileName(const char* name)
 }
 
 
-static bool AppIni_file_exists(const fs::path& p, fs::file_status s = fs::file_status{})
+static bool AppIni_file_exists(char * fname) //const fs::path& p, fs::file_status s = fs::file_status{})
 {
-    if (fs::status_known(s) ? fs::exists(s) : fs::exists(p))
+    const fs::path sandbox{ AppIni_dbName };
+    fs::file_status s = fs::file_status{};
+
+    if (fs::status_known(s) ? fs::exists(s) : fs::exists(sandbox))
     {
-        if (AppIni_Debug) {
-            putsBlue("file exists: %s", p);
-        }
+        if (AppIni_Debug) putsBlue("\tfile exists: %s", fname);
         return true;
     }
     else
     {
-        if (AppIni_Debug)
-        {
-            putsBlue("file does not exist: %s", p);
-        }
+        if (AppIni_Debug) putsBlue("\tfile does not exist: %s", fname);
         return false;
     }
 }
-
 
 
 //Create and intialize Application Database with 3 tables
@@ -50,8 +44,7 @@ bool bg_CreateAppIniIfDoesntExist()
 {
     putsBlue("3. Looking for App Ini Data base %s", AppIni_dbName);
 
-    const fs::path sandbox{ AppIni_dbName };
-    if (AppIni_file_exists(sandbox))
+    if (AppIni_file_exists(AppIni_dbName))
     {
         putsGreen("\tFound AppIni Database -> %s", AppIni_dbName);
         return false;

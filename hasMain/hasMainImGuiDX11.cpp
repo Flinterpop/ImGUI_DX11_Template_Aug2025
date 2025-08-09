@@ -39,7 +39,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 ////////////////////Brad: Only changes required for this file: Provide App name , provide Appini filename, and enable IMPLOT or not
 const char* g_AppName{"Template App V1"};
-const char* g_AppIniFname{ "ImBG_APP_Ini.db" };
+static const char* g_AppIniFname{ "ImBG_APP_Ini.db" };
 #define USE_IMPLOT
 
 
@@ -53,6 +53,14 @@ const char* g_AppIniFname{ "ImBG_APP_Ini.db" };
 int main(int, char**)
 {
     putsBlue("1. BG ImguiDX11 App starting...");
+
+    std::string launchFolder = GetExeDirectory();
+    putsBlue("\tLaunch Folder: %s", launchFolder.c_str());
+    char CW[MAX_PATH];
+    DWORD retVal = GetCurrentDirectoryA(MAX_PATH, CW);
+    putsBlue("\tRun Folder: %s", CW);
+
+
     bg_ShowDesktopResolution();  //just for info
 
     putsBlue("\tEnabling DPI Awareness");
@@ -61,7 +69,11 @@ int main(int, char**)
     float main_scale = ImGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
     putsBlue("\tMain Display scale is %f", main_scale);
 
-    bg_SetIniDBFileName(g_AppIniFname);
+    char iniLoc[MAX_PATH];
+    sprintf(iniLoc, "%s\\%s",CW, g_AppIniFname);
+    putsBlue("\tApp Ini file: %s", iniLoc);
+
+    bg_SetIniDBFileName(iniLoc);
     bg_CreateAppIniIfDoesntExist();
 
     float pos_x = 100;

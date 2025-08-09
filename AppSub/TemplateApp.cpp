@@ -170,7 +170,6 @@ void TemplateApp::UpdateApp()
 }
 
 
-
 void TemplateApp::ShowAllMenuBars()
 {
     if (ImGui::BeginMenuBar())
@@ -201,6 +200,39 @@ void TemplateApp::ShowAllMenuBars()
 
             ImGui::EndMenu();
         }
+
+
+        if (ImGui::BeginMenu("Test File Open/Close"))
+        {
+            static char TestFileName[MAX_PATH]{"*.*"};
+
+            char *initialFolder = "logs";
+
+            if (ImGui::MenuItem("Open LoadFile", NULL))
+            {
+                //std::string curdir = GetExeDirectory();
+                //printf("CurDir is %s\r\n", curdir.c_str());
+
+                bool fail = g_OpenFile(nullptr, TestFileName);
+                if (false == fail) AddLog(TestFileName);
+            }
+            ImGui::SetItemTooltip("Open any sort of load file.");
+
+
+            if (ImGui::MenuItem("Save LoadFile", NULL))
+            {
+                bool fail = g_SaveFile(nullptr, TestFileName);
+                if (false == fail) AddLog(TestFileName);
+            }
+            ImGui::SetItemTooltip("Save current load file.");
+
+
+            ImGui::EndMenu();
+        }
+
+
+
+
         if (ImGui::BeginMenu("Help"))
         {
             if (ImGui::MenuItem("Show Demo Window", NULL, mb_showDemoWindow)) { mb_showDemoWindow = !mb_showDemoWindow; }

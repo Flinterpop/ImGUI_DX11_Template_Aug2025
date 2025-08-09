@@ -94,10 +94,7 @@ if (NOT imgui_FOUND) # If there's none, fetch and build imgui
   endif()
 
 
-	
-	
-
-  set_property(GLOBAL PROPERTY USE_FOLDERS ON)  #this is on by default
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)  #this is on by default
 
 
 

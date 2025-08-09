@@ -7,6 +7,114 @@
 
 #include <locale>
 #include <codecvt>
+#include <AppLogger.h>
+
+
+
+bool g_OpenFile(HWND hwnd, char* fpath, char *filter)
+{
+    OPENFILENAMEA ofn;
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = hwnd;  // If you have a window to center over, put its HANDLE here
+    ofn.lpstrFilter = "Text Files\0*.txt\0Any File\0*.*\0";
+    ofn.lpstrFile = fpath;
+    ofn.nMaxFile = MAX_PATH;
+    ofn.lpstrTitle = "Select a File to open";
+    ofn.Flags = OFN_DONTADDTORECENT;// | OFN_FILEMUSTEXIST;
+
+    if (GetOpenFileNameA(&ofn))
+    {
+        std::cout << "You chose the file \"" << fpath << "\"\n";
+        return false; //means no error
+    }
+    else
+    {
+        // All this stuff below is to tell you exactly how you messed up above. 
+        // Once you've got that fixed, you can often (not always!) reduce it to a 'user cancelled' assumption.
+        switch (CommDlgExtendedError())
+        {
+        case CDERR_DIALOGFAILURE: std::cout << "CDERR_DIALOGFAILURE\n";   break;
+        case CDERR_FINDRESFAILURE: std::cout << "CDERR_FINDRESFAILURE\n";  break;
+        case CDERR_INITIALIZATION: std::cout << "CDERR_INITIALIZATION\n";  break;
+        case CDERR_LOADRESFAILURE: std::cout << "CDERR_LOADRESFAILURE\n";  break;
+        case CDERR_LOADSTRFAILURE: std::cout << "CDERR_LOADSTRFAILURE\n";  break;
+        case CDERR_LOCKRESFAILURE: std::cout << "CDERR_LOCKRESFAILURE\n";  break;
+        case CDERR_MEMALLOCFAILURE: std::cout << "CDERR_MEMALLOCFAILURE\n"; break;
+        case CDERR_MEMLOCKFAILURE: std::cout << "CDERR_MEMLOCKFAILURE\n";  break;
+        case CDERR_NOHINSTANCE: std::cout << "CDERR_NOHINSTANCE\n";     break;
+        case CDERR_NOHOOK: std::cout << "CDERR_NOHOOK\n";          break;
+        case CDERR_NOTEMPLATE: std::cout << "CDERR_NOTEMPLATE\n";      break;
+        case CDERR_STRUCTSIZE: std::cout << "CDERR_STRUCTSIZE\n";      break;
+        case FNERR_BUFFERTOOSMALL: std::cout << "FNERR_BUFFERTOOSMALL\n";  break;
+        case FNERR_INVALIDFILENAME: std::cout << "FNERR_INVALIDFILENAME\n"; break;
+        case FNERR_SUBCLASSFAILURE: std::cout << "FNERR_SUBCLASSFAILURE\n"; break;
+        default: std::cout << "You cancelled.\n";
+        }
+    }
+    return true;
+}
+
+bool g_SaveFile(HWND hwnd, char* fpath, char * filter)
+{
+    OPENFILENAMEA ofn;
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = hwnd;  // If you have a window to center over, put its HANDLE here
+    ofn.lpstrFilter = filter; //"Text Files\0*.txt\0Any File\0*.*\0";
+    ofn.lpstrFile = fpath;
+    ofn.nMaxFile = MAX_PATH;
+    ofn.lpstrTitle = "Select a Save File name";
+    ofn.Flags = OFN_DONTADDTORECENT;
+
+    if (GetSaveFileNameA(&ofn))
+    {
+        std::cout << "You chose the file \"" << fpath << "\"\n";
+        return false;
+    }
+    else
+    {
+        // All this stuff below is to tell you exactly how you messed up above. 
+        // Once you've got that fixed, you can often (not always!) reduce it to a 'user cancelled' assumption.
+        switch (CommDlgExtendedError())
+        {
+        case CDERR_DIALOGFAILURE: std::cout << "CDERR_DIALOGFAILURE\n";   break;
+        case CDERR_FINDRESFAILURE: std::cout << "CDERR_FINDRESFAILURE\n";  break;
+        case CDERR_INITIALIZATION: std::cout << "CDERR_INITIALIZATION\n";  break;
+        case CDERR_LOADRESFAILURE: std::cout << "CDERR_LOADRESFAILURE\n";  break;
+        case CDERR_LOADSTRFAILURE: std::cout << "CDERR_LOADSTRFAILURE\n";  break;
+        case CDERR_LOCKRESFAILURE: std::cout << "CDERR_LOCKRESFAILURE\n";  break;
+        case CDERR_MEMALLOCFAILURE: std::cout << "CDERR_MEMALLOCFAILURE\n"; break;
+        case CDERR_MEMLOCKFAILURE: std::cout << "CDERR_MEMLOCKFAILURE\n";  break;
+        case CDERR_NOHINSTANCE: std::cout << "CDERR_NOHINSTANCE\n";     break;
+        case CDERR_NOHOOK: std::cout << "CDERR_NOHOOK\n";          break;
+        case CDERR_NOTEMPLATE: std::cout << "CDERR_NOTEMPLATE\n";      break;
+        case CDERR_STRUCTSIZE: std::cout << "CDERR_STRUCTSIZE\n";      break;
+        case FNERR_BUFFERTOOSMALL: std::cout << "FNERR_BUFFERTOOSMALL\n";  break;
+        case FNERR_INVALIDFILENAME: std::cout << "FNERR_INVALIDFILENAME\n"; break;
+        case FNERR_SUBCLASSFAILURE: std::cout << "FNERR_SUBCLASSFAILURE\n"; break;
+        default: std::cout << "You cancelled.\n";
+        }
+    }
+    return true;
+}
+
+
+std::string GetExeDirectory()
+{
+    char exePath[MAX_PATH];
+    GetModuleFileNameA(NULL, exePath, MAX_PATH);
+
+    std::string fullPath = exePath;
+    size_t lastSlashPos = fullPath.find_last_of("\\");
+
+    if (lastSlashPos != std::string::npos) {
+        return fullPath.substr(0, lastSlashPos + 1); // +1 to include the backslash
+    }
+    return ""; // Or handle error appropriately
+}
+
+
 
 std::wstring convertUTF8ToWstring(const std::string& utf8_string)
 {
@@ -14,8 +122,6 @@ std::wstring convertUTF8ToWstring(const std::string& utf8_string)
     return converter.from_bytes(utf8_string);
 }
 
-
-//extern char g_StartupFolder[MAX_PATH];
 
 // Function to convert UTF-8 to UTF-16
 std::wstring Utf8ToUtf16(const std::string& utf8_string) {
@@ -39,64 +145,6 @@ std::string Utf16ToUtf8(const std::wstring& utf16_string) {
     return std::string(&utf8_buffer[0]);
 }
 
-
-
-bool GetOpenFileNameWithUtf8Support(HWND hwnd, char* fpath, char *initialFolder)
-{
-    //use the A functions for 8bit
-    OPENFILENAMEA ofn = { 0 };
-    char szFile[MAX_PATH] = { 0 }; // Buffer for the selected file path
-
-    ofn.lStructSize = sizeof(ofn);
-    ofn.hwndOwner = hwnd;
-    ofn.lpstrFile = fpath; //szFile;
-    ofn.nMaxFile = MAX_PATH; //sizeof(szFile) / sizeof(szFile[0]);
-    ofn.lpstrFilter = "pf Files (*.pf)\0";
-    ofn.nFilterIndex = 1;
-    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
-
-    if (nullptr != initialFolder) ofn.lpstrInitialDir = initialFolder;
-
-    if (GetOpenFileNameA(&ofn) == TRUE) {
-        //std::string selected_file_path_utf8 = szFile;
-        //strcpy(fpath, szFile);
-        return false;
-    }
-    return true;
-}
-
-
-
-//FIX this - check verson in SQL_ACLIst.cpp
-bool GetSaveFileNameWithUtf8Support(HWND hwnd, char* fname, char* initialFolder)
-{
-    OPENFILENAMEA ofn = { 0 };
-    char szFileTitle[60] = {"Save Aircraft List"};
-    char szFile[MAX_PATH];
-    szFile[0] = '\0';
-    ofn.lStructSize = sizeof(OPENFILENAMEA);
-    ofn.hwndOwner = nullptr; //hWnd; // Handle to your parent window
-    ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
-    ofn.lpstrFilter = "SQL files (*.db)\0"; 
-    ofn.nFilterIndex = 1;
-    ofn.lpstrFile = fname; //szFile;
-    ofn.nMaxFile = sizeof(szFile) / sizeof(*szFile);
-    ofn.lpstrFileTitle = szFileTitle;
-    ofn.nMaxFileTitle = sizeof(szFileTitle);
-
-    if (nullptr != initialFolder) ofn.lpstrInitialDir = initialFolder;
- 
-    if (0 != GetSaveFileNameA(&ofn))
-    {
-        return false;
-    }
-    else
-    {
-        putsRed("Error in trying to save Aircraft List");
-        return true;
-    }
-    return false;
-}
 
 
 
