@@ -15,7 +15,7 @@
 //#include "ImBGUtil.h"
 
 
-#include "TemplateApp.h"
+#include "GAMS2App.h"
 #include "help.h"
 
 #include "implot.h"
@@ -23,7 +23,14 @@
 #include "ImGuiNotify.hpp"
 
 
-void TemplateApp::InitializeApp()
+void LoadFileEditorWindow();
+void ShowLoadFileModeMenuBars();
+
+//void _ShowPlatformJ(bool* pOpen);
+
+
+
+void GAMS2::InitializeApp()
 {
     int retVal = initialise_winsock();
     if (0 != retVal)
@@ -35,14 +42,14 @@ void TemplateApp::InitializeApp()
     LoadMainAppStateFromApp_Ini();
 };
 
-void TemplateApp::ShutDownApp()
+void GAMS2::ShutDownApp()
 {
     SaveMainAppStateFromApp_Ini();
 
-    //closeandclean_winsock();
+
 }
 
-void TemplateApp::LoadMainAppStateFromApp_Ini()
+void GAMS2::LoadMainAppStateFromApp_Ini()
 {
     putsBlue("\tLoading App State");
     
@@ -75,7 +82,7 @@ void TemplateApp::LoadMainAppStateFromApp_Ini()
 }
 
 
-void TemplateApp::SaveMainAppStateFromApp_Ini()
+void GAMS2::SaveMainAppStateFromApp_Ini()
 {
     putsBlue("Saving App State");
 
@@ -95,7 +102,7 @@ void TemplateApp::SaveMainAppStateFromApp_Ini()
 
 
 
-void TemplateApp::MainDraw()
+void GAMS2::TestWindow()
 {
     
     //this content provides a drawing context that is the entire window 
@@ -134,53 +141,26 @@ void TemplateApp::MainDraw()
 }
 
 
-
-void TemplateApp::UpdateApp()
+void GAMS2::BottomStatusBar()
 {
-	CheckKeysPressed();
-
-
-
-    //these 4 lines force the next ImGui::Begin to use the main viewport. 
-    const ImGuiViewport* viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(viewport->WorkPos);
-    ImGui::SetNextWindowSize(viewport->WorkSize);
-    ImGui::SetNextWindowViewport(viewport->ID);
-
-    std::string _MainWindowsTitle = "ImGuiDX11 Template"; //fmt::format("Map: {0} at Zm {1}  declutter: {2}###MainWindow", mngr.GetCurMapName().c_str(), m_Zoom, g_acmPtr->getDeclutter());
-
-    ImGui::Begin(_MainWindowsTitle.c_str(), 0, mainWinFlags); //| ImGuiWindowFlags_NoResize);
-
-    ShowAllMenuBars();
-
-    MainDraw();
-
-#pragma region DrawOverlays
-    //DrawToolBar();
-    //DrawToast();
-#pragma endregion DrawOverlays
-
-
-    ImGui::End();
-
-
-
-
-#pragma region ShowOtherWindows
-    if (mb_showLog)         ShowLogWindow(&mb_showLog);
-    if (mb_showOptions)     ShowAppOptions(&mb_showOptions);
-    if (mb_showAbout)       ShowAbout(&mb_showAbout);
-    if (mb_showHelp)        ShowHelpWindow(&mb_showHelp);
-    
-    if (mb_showDemoWindow)  ImGui::ShowDemoWindow(&mb_showDemoWindow);
-#pragma endregion OtherWindows
-
-
-
+    ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;// | ImGuiWindowFlags_NoTitleBar;
+    float height = ImGui::GetFrameHeight();
+    if (ImGui::BeginViewportSideBar("##MainStatusBar", viewport, ImGuiDir_Down, height, window_flags))
+    {
+        if (ImGui::BeginMenuBar())
+        {
+            ImGui::Text("Bottom Status bar");
+            ImGui::SameLine();
+            ImGui::Button("A");
+            ImGui::EndMenuBar();
+        }
+        ImGui::End();
+    }
 }
 
 
-void TemplateApp::ShowAllMenuBars()
+void GAMS2::ShowAllMenuBars()
 {
     if (ImGui::BeginMenuBar())
     {
@@ -189,19 +169,17 @@ void TemplateApp::ShowAllMenuBars()
             if (ImGui::MenuItem("Re-Load App State"))
             {
                 LoadMainAppStateFromApp_Ini();
-                //DoLoadAllModulesStateFromApp_Ini();
             }
             ImGui::SetItemTooltip("Loads app.ini file.");
 
             if (ImGui::MenuItem("Save App State"))
             {
                 SaveMainAppStateFromApp_Ini();
-                //DoSaveAllModuleStateToApp_Ini();
             }
             ImGui::SetItemTooltip("Saves App (not scenario) state.  Creates new app.ini file if one does not exist.");
 
-
             ImGui::Separator();
+
             if (ImGui::MenuItem("App Options", NULL, mb_showOptions)) { mb_showOptions = !mb_showOptions; }
 
             ImGui::Separator();
@@ -240,16 +218,33 @@ void TemplateApp::ShowAllMenuBars()
             ImGui::EndMenu();
         }
 
+
+
+
         if (ImGui::BeginMenu("Test Socket"))
         {
             if (ImGui::MenuItem("Open TCP", NULL))
             {
-                SocketTest();
+                StartTCPTest();
+            }
+       
+            if (ImGui::MenuItem("Send TCP", NULL))
+            {
+                SendTCPTest();
+            }
+
+            if (ImGui::MenuItem("Close TCP", NULL))
+            {
+                StopTCPTest();
             }
             ImGui::EndMenu();
-         
+
 
         }
+
+
+
+        if (LOAD_FILE_EDITOR == AppMode) ShowLoadFileModeMenuBars();
 
         if (ImGui::BeginMenu("Help"))
         {
@@ -257,6 +252,32 @@ void TemplateApp::ShowAllMenuBars()
 
             if (ImGui::MenuItem("Log", NULL, mb_showLog)) { mb_showLog = !mb_showLog; }
             if (ImGui::MenuItem("Debug", NULL, mb_map_debug)) { mb_map_debug = !mb_map_debug; }
+
+
+
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Topic - Introduction ", NULL)) OpenHelpTopic("Introduction");
+            if (ImGui::MenuItem("Topic - Overview ", NULL)) OpenHelpTopic("Overview");
+            if (ImGui::MenuItem("Topic - SDW1", NULL)) OpenHelpTopic("SDW1");
+            if (ImGui::MenuItem("Topic - SDW1 int", NULL)) OpenHelpTopic(1001);
+            if (ImGui::MenuItem("Topic - SDW2", NULL)) OpenHelpTopic(1002);
+
+            if (ImGui::MenuItem("ICD", NULL)) {
+                INT_PTR a = (INT_PTR)ShellExecuteA(GetDesktopWindow(), "open", "SS02_ICS-JC-10002-Appendix-A-Vol-I-Rev-.pdf", NULL, NULL, SW_SHOWNORMAL);
+                AddLog("retVal is %d", a);
+                if (ERROR_FILE_NOT_FOUND == a) AddLog("ERROR_FILE_NOT_FOUND");
+                else if (ERROR_PATH_NOT_FOUND == a) AddLog("ERROR_PATH_NOT_FOUND");
+                else if (ERROR_BAD_FORMAT == a) AddLog("ERROR_BAD_FORMAT");
+            }
+            ImGui::SetItemTooltip("SYSTEM/SEGMENT ICS FOR THE MIDS JTRS CMN-4 Apx A - LSW ICD - VOLUME I OF III");
+
+            ImGui::Separator();
+
+
+
+
             if (ImGui::MenuItem("Help", NULL, mb_showHelp)) { mb_showHelp = !mb_showHelp; }
             if (ImGui::MenuItem("About", NULL, mb_showAbout)) { mb_showAbout = !mb_showAbout; }
             ImGui::EndMenu();
@@ -268,7 +289,7 @@ void TemplateApp::ShowAllMenuBars()
 }
 
 
-void TemplateApp::CheckKeysPressed()
+void GAMS2::CheckKeysPressed()
 {
     if (ImGui::IsKeyPressed(ImGuiKey_W)) 
     { 
@@ -289,6 +310,41 @@ void TemplateApp::CheckKeysPressed()
 
 
 
+//MAIN LOOP/////////////////////////////////
+void GAMS2::UpdateApp()
+{
+    CheckKeysPressed();
+
+    //these 4 lines force the next ImGui::Begin to use the main viewport. 
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize(viewport->WorkSize);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    std::string _MainWindowsTitle = "ImGuiDX11 Template"; //fmt::format("Map: {0} at Zm {1}  declutter: {2}###MainWindow", mngr.GetCurMapName().c_str(), m_Zoom, g_acmPtr->getDeclutter());
+    ImGui::Begin(_MainWindowsTitle.c_str(), 0, mainWinFlags); //| ImGuiWindowFlags_NoResize);
+
+        ShowAllMenuBars();
+
+        if (LOAD_FILE_EDITOR == AppMode) LoadFileEditorWindow();
+        else if (LOAD_FILE_EDITOR == AppMode) TestWindow();
+
+        bool b_showPlatformJ = true;
+        //_ShowPlatformJ(&b_showPlatformJ);
+
+
+        BottomStatusBar();
+
+    ImGui::End();
+
+
+    if (mb_showLog)         ShowLogWindow(&mb_showLog);
+    if (mb_showOptions)     ShowAppOptions(&mb_showOptions);
+    if (mb_showAbout)       ShowAbout(&mb_showAbout);
+    if (mb_showHelp)        ShowHelpWindow(&mb_showHelp);
+
+    if (mb_showDemoWindow)  ImGui::ShowDemoWindow(&mb_showDemoWindow);
+}
 
 
 

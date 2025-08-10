@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.20...4.0) # FetchContent is available in 3.11+
 
 # https://www.programmersought.com/article/68945253024/
 
-project(dx11Base VERSION 0.0.1)
+project(GAMS2 VERSION 0.0.1)
 
 set(WINDOWKIT_VERSION 10) # folder folder version
 set(WINDOWKIT_VERSION_UPDATE 10.0.19041.0) # sub folder folder version
@@ -130,8 +130,8 @@ set(
 	AppSub/AppOptionsSub.cpp
 	AppSub/help.cpp 
 	AppSub/help.h
-	AppSub/TemplateApp.cpp
-	AppSub/TemplateApp.h
+	AppSub/GAMS2App.cpp
+	AppSub/GAMS2App.h
 	AppSub/TemplateBaseNetworking.cpp
 	
 
@@ -178,6 +178,17 @@ set(
 	image/ImageDX.h
 	image/stb_image.h
 	image/stb_image_write.h
+
+
+	LoadFile/LoadFile.h
+	LoadFile/LoadFile.cpp
+
+	PlatformJ/FOMSupport.cpp
+	PlatformJ/FOMSupport.h
+	PlatformJ/Platform_J.cpp
+	PlatformJ/Platform_J.h
+	PlatformJ/PlatformJ_UI.cpp
+
 
 )
 

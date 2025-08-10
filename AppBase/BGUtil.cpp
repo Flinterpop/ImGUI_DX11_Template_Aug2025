@@ -10,6 +10,73 @@
 #include <AppLogger.h>
 
 
+//check this for wide string
+bool OpenFileWithUtf8Support(HWND hwnd, char* fpath)
+{
+    OPENFILENAMEW ofn = { 0 };
+    wchar_t szFile[MAX_PATH] = { 0 }; // Buffer for the selected file path
+
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = hwnd;
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = sizeof(szFile) / sizeof(szFile[0]);
+    //ofn.lpstrFilter = L"All Files (*.*)\0*.*\0Text Files (*.txt)\0*.txt\0"; // Example filter
+    ofn.lpstrFilter = L"pf Files (*.pf)\0";
+
+    ofn.nFilterIndex = 1;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+    if (GetOpenFileNameW(&ofn) == TRUE) {
+        // The selected file path is in szFile (UTF-16)
+        std::wstring selected_file_path_utf16 = szFile;
+
+        // Convert back to UTF-8 if needed for your application's internal logic
+        std::string selected_file_path_utf8 = Utf16ToUtf8(selected_file_path_utf16);
+
+        // Now you can use selected_file_path_utf8
+        strcpy(fpath, selected_file_path_utf8.c_str());
+        //Load_LoadFile(szFile);
+        return false;
+    }
+    return true;
+}
+
+bool SaveFileWithUtf8Support(HWND hwnd, char* fname)
+{
+    std::string utf8_path = fname; //"C:\\My Documents\\a.pf";
+    int buffer_size = MultiByteToWideChar(CP_UTF8, 0, utf8_path.c_str(), -1, NULL, 0);
+    std::vector<wchar_t> wide_path_buffer(buffer_size);
+    MultiByteToWideChar(CP_UTF8, 0, utf8_path.c_str(), -1, wide_path_buffer.data(), buffer_size);
+
+    // Now wide_path_buffer contains the UTF-16 representation
+    // You can use wide_path_buffer.data() as lpstrFile in OPENFILENAMEW
+
+
+    OPENFILENAMEW ofn = { 0 };
+    ofn.lStructSize = sizeof(OPENFILENAMEW);
+    ofn.hwndOwner = nullptr; //hWnd; // Handle to your parent window
+    ofn.lpstrFilter = L"Load Files (*.pf)\0";
+    ofn.lpstrFile = wide_path_buffer.data();
+    ofn.nMaxFile = wide_path_buffer.size();
+    ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST;  //OFN_NOCHANGEDIR
+
+    if (0 != GetSaveFileNameW(&ofn))  //non 0 means good to go
+    {
+        printf("All GOOD\r\n");
+        // User selected a file
+        // The selected path is in wide_path_buffer.data()
+        //Save_LoadFile(wide_path_buffer.data());
+    }
+    else
+    {
+        printf("GetSaveFileNameW returned not TRUE");
+    }
+
+    return false;
+}
+
+
+
 
 bool g_OpenFile(HWND hwnd, char* fpath, char *filter)
 {
@@ -17,7 +84,7 @@ bool g_OpenFile(HWND hwnd, char* fpath, char *filter)
     ZeroMemory(&ofn, sizeof(ofn));
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = hwnd;  // If you have a window to center over, put its HANDLE here
-    ofn.lpstrFilter = "Text Files\0*.txt\0Any File\0*.*\0";
+    ofn.lpstrFilter = filter;//"Text Files\0*.txt\0Any File\0*.*\0";
     ofn.lpstrFile = fpath;
     ofn.nMaxFile = MAX_PATH;
     ofn.lpstrTitle = "Select a File to open";

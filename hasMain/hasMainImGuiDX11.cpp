@@ -1,10 +1,3 @@
-// Dear ImGui: standalone example application for DirectX 11
-
-// Learn about Dear ImGui:
-// - FAQ                  https://dearimgui.com/faq
-// - Getting Started      https://dearimgui.com/getting-started
-// - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
-// - Introduction, links and more at the top of imgui.cpp
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"
@@ -32,14 +25,14 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #include "AppIni.h"
 #include "BGMainSupport.h"
 #include "resource.h"
-#include "TemplateApp.h"
+#include "GAMS2App.h"
 #include <ImGuiNotify.hpp>
 
 #include "imgui_internal.h" //for ImGuiContext
 
 ////////////////////Brad: Only changes required for this file: Provide App name , provide Appini filename, and enable IMPLOT or not
-const char* g_AppName{"Template App V1"};
-static const char* g_AppIniFname{ "ImBG_APP_Ini.db" };
+const char* g_AppName{"GAMSV2"};
+static const char* g_AppIniFname{ "GAMS_APP_Ini.db" };
 #define USE_IMPLOT
 
 
@@ -177,7 +170,7 @@ int main(int, char**)
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
 
-    TemplateApp MyApp; //m_map is an ImGuiApp
+    GAMS2 MyApp; //m_map is an ImGuiApp
     putsBlue("5. Initializing App");
     MyApp.InitializeApp();
 

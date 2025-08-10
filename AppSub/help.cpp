@@ -1,19 +1,9 @@
 #include "imgui.h"
-//#include "fonts\IconsFontAwesome5.h"
 #include "fonts\font_awesome_5.h"
 
 
-//#include "MapsToast.h"
-
-
-
-void FontTest();
-
 #include <windows.h>
-
-
 #include <string>
-
 
 #include <fmt/base.h>
 #include <fmt/format.h>
@@ -22,28 +12,41 @@ void FontTest();
 #include "stdio.h"
 
 #include "ImBGUtil.h"
+#include "AppLogger.h"
 
-#
+#include "help.h"
+
+void FontTest();
+
+
 
 extern const char* g_AppName;
 
-void ShowHelpSubject(char* subject)
+bool OpenHelpTopic(char* topic)
 {
-    std::string _str = fmt::format("ewriter://ImRadarSitesHelp.ewriter?loadpage={:s}.html", subject);
-    INT_PTR a = (INT_PTR)ShellExecuteA(GetDesktopWindow(), "open", "eViewer.exe", _str.c_str(), NULL, SW_SHOWNORMAL);   
-    if (42 != (int)a)
-    {
-        /*
-        char buf[40];
-        sprintf(buf, "RetVal is %d", (int)a);
-        g_SetToastMessage(buf, 5);
-        printf("RetVal is % d", (int)a);
-        if (ERROR_FILE_NOT_FOUND == a) g_SetToastMessage("ERROR_FILE_NOT_FOUND");
-        else if (ERROR_PATH_NOT_FOUND == a) g_SetToastMessage("ERROR_PATH_NOT_FOUND");
-        else if (ERROR_BAD_FORMAT == a) g_SetToastMessage("ERROR_BAD_FORMAT");
-        */
-    }
-   }
+    char buf[200];
+    sprintf(buf, "ewriter://LFE.ewriter?loadpage=%s.html", topic);
+    INT_PTR a = (INT_PTR)ShellExecuteA(GetDesktopWindow(), "open", "eViewer.exe", buf, NULL, SW_SHOWNORMAL);
+
+    AddLog("retVal is %d", a);
+    if (ERROR_FILE_NOT_FOUND == a) AddLog("ERROR_FILE_NOT_FOUND");
+    else if (ERROR_PATH_NOT_FOUND == a) AddLog("ERROR_PATH_NOT_FOUND");
+    else if (ERROR_BAD_FORMAT == a) AddLog("ERROR_BAD_FORMAT");
+    return false;
+}
+
+bool OpenHelpTopic(int context)
+{
+    char buf[200];
+    sprintf(buf, "ewriter://LFE.ewriter?loadcontext=%d", context);
+    INT_PTR a = (INT_PTR)ShellExecuteA(GetDesktopWindow(), "open", "eViewer.exe", buf, NULL, SW_SHOWNORMAL);
+    AddLog("retVal is %d", a);
+    if (ERROR_FILE_NOT_FOUND == a) AddLog("ERROR_FILE_NOT_FOUND");
+    else if (ERROR_PATH_NOT_FOUND == a) AddLog("ERROR_PATH_NOT_FOUND");
+    else if (ERROR_BAD_FORMAT == a) AddLog("ERROR_BAD_FORMAT");
+    return false;
+}
+
 
 void ShowHelpWindow(bool *bHelpWindow)
 {
@@ -59,28 +62,25 @@ void ShowHelpWindow(bool *bHelpWindow)
     {
         char buf[50];
         INT_PTR a = (INT_PTR)ShellExecuteA(GetDesktopWindow(), "open", "RadarAppHelp.pdf", NULL, NULL, SW_SHOWNORMAL);
-        /*
         sprintf(buf, "RetVal is %d", (int)a);
-        g_SetToastMessage(buf, 5);
+        AddLog(buf, 5);
         printf("RetVal is % d", (int)a);
-        if (ERROR_FILE_NOT_FOUND == a) g_SetToastMessage("ERROR_FILE_NOT_FOUND",5);
-        else if (ERROR_PATH_NOT_FOUND == a) g_SetToastMessage("ERROR_PATH_NOT_FOUND",5);
-        else if (ERROR_BAD_FORMAT == a) g_SetToastMessage("ERROR_BAD_FORMAT",5);
-        */
+        if (ERROR_FILE_NOT_FOUND == a) AddLog("ERROR_FILE_NOT_FOUND",5);
+        else if (ERROR_PATH_NOT_FOUND == a) AddLog("ERROR_PATH_NOT_FOUND",5);
+        else if (ERROR_BAD_FORMAT == a) AddLog("ERROR_BAD_FORMAT",5);
+        
     }
     ImGui::SameLine(); 
     HelpMarker("This will open a PDF if one exists");
 
     if (ImGui::Button("Help - Overview"))
     {
-        ShowHelpSubject("Overview");
+        OpenHelpTopic("Overview");
     }
     ImGui::SameLine();
     HelpMarker("This will open a Web Style Help File if one exists. It requires a copy of eViewer.exe to be in the runFolder as well as a *.ewriter file.");
 
-
-    
-    
+       
 
     ImGui::SeparatorText("Key Mappings");
     ImGui::Text("ESC - Cancel Doing Something");

@@ -1,10 +1,10 @@
 #include "imgui.h"
 
-#include "TemplateApp.h"
+#include "GAMS2App.h"
 
 
 
-void TemplateApp::InsertSpecificOptions()
+void GAMS2::InsertSpecificOptions()
 {
     bool someBool = false;
     ImGui::Checkbox("App Specific Dummy", &someBool);

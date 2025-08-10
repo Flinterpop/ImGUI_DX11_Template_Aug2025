@@ -11,9 +11,6 @@
 //Can send with:			bool SendTCPPacket(char* buffer, int bLen);
 
 
-void subProcessTCPPacket(char* packet, int pLen);
-
-
 static SOCKET OpenTCPServerSocket(char* host, u_short port)
 {
 	printf("Trying to open TCP Socket %s:%d...\r\n", host, port);
@@ -46,12 +43,11 @@ static SOCKET OpenTCPServerSocket(char* host, u_short port)
 class bg_TCPSocket
 {
 public:
-	//bg_TCPSocket() {};
-
-	bg_TCPSocket(char* host, int port)
+	bg_TCPSocket(char* host, int port, DWORD (*f)(LPVOID lpParameter)) //needs a function pointer to the owners listen thread
 	{
 		TCP_Port = port;
 		strncpy(TCP_Host, host, 30);
+		ListenThreadFuncPtr = f;
 	};
 
 	~bg_TCPSocket()
@@ -61,16 +57,18 @@ public:
 		b_TCP_SocketOpened = false;
 	};
 
+	void StopTCPListThread()
+	{
+		b_TCPThreadIsListening = false;
+		if (b_TCP_SocketOpened) closesocket(TCPClientSocket);
+		b_TCP_SocketOpened = false;
+	};
 
 	void StartTCPOpenThread()
 	{
 		CreateThread(NULL, 0, m_StaticThreadEntry, this, 0, NULL);
 	};
 
-	void StopTCPListenThread()
-	{
-		b_TCPThreadIsListening = false;
-	};
 
 	bool SendTCPPacket(char* buffer, int bLen)
 	{
@@ -80,21 +78,22 @@ public:
 			printf("Error Sending TCP Packet of size %d ->%s",bLen,buffer);
 			return true;
 		}
-
 		return false;
-
 	}
 
 
-
-protected:
-	SOCKET TCPClientSocket;
 	char TCP_Host[30] = "192.168.1.132";
 	int TCP_Port = 30154;
+
+protected:
+	
+	SOCKET TCPClientSocket;
 	bool b_TCP_SocketOpened = false;
 	bool b_TCPThreadIsListening = false;
+	
+	DWORD (*ListenThreadFuncPtr)(LPVOID lpParameter);
 
-private:
+
 	static DWORD WINAPI m_StaticThreadEntry(LPVOID lpParam) 
 	{
 		bg_TCPSocket* pThis = static_cast<bg_TCPSocket*>(lpParam);
@@ -112,57 +111,15 @@ private:
 			return;
 		}
 
-		HANDLE hThread = CreateThread(NULL, 0, TCPListenThread, (LPVOID)&TCPClientSocket, 0, NULL);
+		HANDLE hThread = CreateThread(NULL, 0, ListenThreadFuncPtr, (LPVOID)&TCPClientSocket, 0, NULL);
 		if (hThread == NULL)
 		{
 			printf("OpenSocketThread not created\r\n");
 			return;
 		}
 		b_TCP_SocketOpened = true;
-	}
-
-
-	static DWORD WINAPI TCPListenThread(LPVOID lpParameter) 
-	{
-		bg_TCPSocket* pThis = static_cast<bg_TCPSocket*>(lpParameter);
-		pThis->TCPListen(lpParameter);
-		return 0;
-	}
-
-
-	void TCPListen(LPVOID lpParameter)
-	{
-		char buffer[1510];
-		SOCKET* TCPClientSocket = (SOCKET*)lpParameter;
-
-		b_TCPThreadIsListening = true;
-		while (b_TCPThreadIsListening) {
-			int n = ::recv(*TCPClientSocket, buffer, 1510, 0);
-
-			if (SOCKET_ERROR == n) continue;
-
-			//printf("TCP Rx %d bytes\r\n", n);
-			if ((n > 0) && (n < 1510))
-			{
-				buffer[n] = 0;
-				if (false)
-				{
-					printf("%s", buffer); //doesn't flush without a newline
-					fflush(stdout);// Force writing buffer to the stdout
-				}
-
-				//ProcessTCPPacket(buffer,n);
-				subProcessTCPPacket(buffer, n);
-			}
-		}
-
-
-		if (b_TCP_SocketOpened) closesocket(*TCPClientSocket);
-		b_TCP_SocketOpened = false;
-		b_TCPThreadIsListening = false;
-	}
-
-
+		puts("Socket Opened");
+	};
 
 };
 

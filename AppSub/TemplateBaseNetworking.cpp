@@ -1,7 +1,7 @@
 
 #include "BG_SocketBase.h"
 
-#include "TemplateApp.h"
+#include "GAMS2App.h"
 #include "AppLogger.h"
 
 #include "bg_TCPSocket.h"
@@ -11,68 +11,72 @@
 #include <BGUtil.h>
 
 
-void subProcessTCPPacket(char* packet, int pLen)
+class TestTDPSocket :public bg_TCPSocket
 {
-    AddLog("Rx TCP Packet");
-    putsGreen("Rx TCP Packet");
+public:
+
+    TestTDPSocket(char* b, int l) :bg_TCPSocket(b, l, TCPListenThread)
+    {
+
+    };
+
+protected:
+    static DWORD WINAPI TCPListenThread(LPVOID lpParameter)
+    {
+        TestTDPSocket* pThis = static_cast<TestTDPSocket*>(lpParameter);
+        pThis->TCPListen(lpParameter);
+        return 0;
+    }
+
+
+    void TCPListen(LPVOID lpParameter) 
+    {
+        char buffer[1510];
+        SOCKET* TCPClientSocket = (SOCKET*)lpParameter;
+
+        b_TCPThreadIsListening = true;
+        while (b_TCPThreadIsListening) {
+            int n = ::recv(*TCPClientSocket, buffer, 1510, 0);
+            if (SOCKET_ERROR == n) continue;
+
+            if ((n > 0) && (n < 1510))
+            {
+                buffer[n] = 0;
+                if (false)
+                {
+                    printf("%s", buffer); //doesn't flush without a newline
+                    fflush(stdout);// Force writing buffer to the stdout
+                }
+
+                printf("Process Packet: %d\r\n",n);
+            }
+        }
+        if (b_TCP_SocketOpened) closesocket(*TCPClientSocket);
+        b_TCP_SocketOpened = false;
+        b_TCPThreadIsListening = false;
+    };
+
+};
+
+
+
+
+class TestTDPSocket myTCP("192.168.1.135", 30154);
+
+
+void GAMS2::StopTCPTest()
+{
+    myTCP.StopTCPListThread();
 }
 
-
-
-
-bg_TCPSocket myTCP("192.168.1.135", 30154);
-bg_UDPSocket myUDP("192.168.1.196", 5005);
-bg_MulticastSocket* myMulticast;
-
-void callbackMultiCastListener(char* _message, int messageSize)
+void GAMS2::StartTCPTest()
 {
-    printf("Multicast Listener Received: %d\r\n", messageSize);
-    //unsigned char* message = (unsigned char*)_message;
-}
-
-
-
-void TemplateApp::SocketTest()
-{
-    AddLog("Socket Test");
-
-    getNetworkAdapterInfo();
-
-    //TCP Test
     myTCP.StartTCPOpenThread();
 
-    char *bPacket = "Big Test of TCP";
+}
+void GAMS2::SendTCPTest()
+{
+    char* bPacket = "Big Test of TCP";
     myTCP.SendTCPPacket(bPacket, strlen(bPacket));
-
-
-    Sleep(100);
-    myTCP.StopTCPListenThread();
-
-
-    //UDP Test
-    myUDP.SendUDP(bPacket, strlen(bPacket));
-
-
-
-    //MULTICAST test
-    char MULTICAST_LISTEN_GROUP[20] = "239.5.237.1";
-    int MULTICAST_LISTEN_PORT = 1581;
-    const unsigned short LOOP_BACK = 1;
-    const unsigned short TTL = 1;
-
-    myMulticast = new bg_MulticastSocket();
-
-    bool result = myMulticast->Intialize(MULTICAST_LISTEN_GROUP, MULTICAST_LISTEN_PORT, LOOP_BACK, TTL, &callbackMultiCastListener);
-    if (result == false)
-    {
-        puts("Failed to initialize multicast socket.");
-        return;
-    }
-    else if (true) puts("Opened CAT7 Listener");
-    printf("Listening on %s:%d\r\n", MULTICAST_LISTEN_GROUP, MULTICAST_LISTEN_PORT);
-
-    int bytesSent = 0;
-    myMulticast->Send(bPacket, strlen(bPacket), bytesSent);
-    printf("Sent %d bytes\r\n",bytesSent);
 }
 

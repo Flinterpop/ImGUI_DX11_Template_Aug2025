@@ -22,8 +22,9 @@ std::wstring convertUTF8ToWstring(const std::string& utf8_string);
 bool g_OpenFile(HWND hwnd, char* fpath, char* filter=nullptr);
 bool g_SaveFile(HWND hwnd, char* fpath, char* filter = nullptr);
 
+std::wstring Utf8ToUtf16(const std::string& utf8_string);
 
-
+std::string Utf16ToUtf8(const std::wstring& utf16_string);
 std::string utf16_to_utf8_winapi(const std::wstring& utf16_string);
 int utf16_to_utf8(const std::wstring& utf16_string, char* dest);
 

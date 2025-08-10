@@ -8,7 +8,7 @@
 #include <string>
 #include "stdio.h"
 
-#include "TemplateApp.h"
+#include "GAMS2App.h"
 #include "BGUtil.h"
 
 extern const char* g_AppName;  //defined in hasMainImGuiDX11.cpp

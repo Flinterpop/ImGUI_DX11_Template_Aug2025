@@ -3,7 +3,7 @@
 #include <string>
 #include "stdio.h"
 
-#include "TemplateApp.h"
+#include "GAMS2App.h"
 
 #include "BGUtil.h"
 
@@ -12,7 +12,7 @@ extern const char* g_AppName;  //defined in hasMainImGuiDX11.cpp
 
 
 
-void TemplateApp::SpecificAbout()
+void GAMS2::SpecificAbout()
 {
     ImGui::TextWrapped("This is a starting project for IMGui Apps running on DirectX11.");
     ImGui::TextWrapped("It includes: ");
@@ -22,7 +22,7 @@ void TemplateApp::SpecificAbout()
     ImGui::TextWrapped("\t-About Window with uptimer");
 }
 
-void TemplateApp::RoadMap()
+void GAMS2::RoadMap()
 {
     //Start CUSTOM CODE here
     ImGui::SeparatorText("Large Features");
